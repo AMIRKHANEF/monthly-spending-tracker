@@ -107,8 +107,8 @@ class SpendingTracker {
     const monthlyTotal = this.getMonthlyTotal()
     const dailyAverage = this.getDailyAverage()
 
-    document.getElementById("totalSpent").textContent = `$${monthlyTotal.toFixed(2)}`
-    document.getElementById("dailyAverage").textContent = `$${dailyAverage.toFixed(2)}`
+    document.getElementById("totalSpent").textContent = `${monthlyTotal.toFixed(0)} تومان`
+    document.getElementById("dailyAverage").textContent = `${dailyAverage.toFixed(0)} تومان`
   }
 
   getMonthlyTotal() {
@@ -177,7 +177,7 @@ class SpendingTracker {
 
       dayElement.innerHTML = `
                 <span class="day-number">${day}</span>
-                ${dayTotal > 0 ? `<span class="day-amount">$${dayTotal.toFixed(0)}</span>` : ""}
+                ${dayTotal > 0 ? `<span class="day-amount">${dayTotal.toFixed(0)} ت</span>` : ""}
             `
 
       dayElement.addEventListener("click", () => this.showDayModal(dateStr, day))
@@ -219,14 +219,14 @@ class SpendingTracker {
                         <span class="expense-description">${expense.description}</span>
                         <span class="expense-date">${new Date(expense.timestamp).toLocaleTimeString()}</span>
                     </div>
-                    <span class="expense-amount">$${expense.amount.toFixed(2)}</span>
+                    <span class="expense-amount">${expense.amount.toFixed(0)} تومان</span>
                 `
         dayExpensesContainer.appendChild(expenseElement)
       })
     }
 
     const dayTotal = dayExpenses.reduce((sum, expense) => sum + expense.amount, 0)
-    document.getElementById("dayTotal").textContent = `$${dayTotal.toFixed(2)}`
+    document.getElementById("dayTotal").textContent = `${dayTotal.toFixed(0)} تومان`
 
     document.getElementById("dayModal").style.display = "block"
   }
@@ -273,7 +273,7 @@ class SpendingTracker {
                     <span class="expense-description">${expense.description}</span>
                     <span class="expense-date">${formattedDate}</span>
                 </div>
-                <span class="expense-amount">$${expense.amount.toFixed(2)}</span>
+                <span class="expense-amount">${expense.amount.toFixed(0)} تومان</span>
             `
 
       expensesContainer.appendChild(expenseElement)
