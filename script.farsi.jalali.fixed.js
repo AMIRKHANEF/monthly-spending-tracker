@@ -1,15 +1,24 @@
 class SpendingTracker {
   constructor() {
-    this.currentDate = new Date()
-    this.expenses = this.loadExpenses()
+    this.currentDate = new Date();
+    this.expenses = this.loadExpenses();
 
     this.monthNamesFa = [
-      "فروردین", "اردیبهشت", "خرداد", "تیر",
-      "مرداد", "شهریور", "مهر", "آبان",
-      "آذر", "دی", "بهمن", "اسفند"
+      "فروردین",
+      "اردیبهشت",
+      "خرداد",
+      "تیر",
+      "مرداد",
+      "شهریور",
+      "مهر",
+      "آبان",
+      "آذر",
+      "دی",
+      "بهمن",
+      "اسفند",
     ];
 
-    this.init()
+    this.init();
   }
 
   init() {
@@ -109,8 +118,8 @@ class SpendingTracker {
     ]
 
     const jDate = window.jalaali.toJalaali(this.currentDate);
-    const currentMonthStr = `${this.monthNamesFa[jDate.jm - 1]} ${jDate.jy}`;
-    document.getElementById("currentMonth").textContent = currentMonthStr;
+const currentMonthStr = `${monthNamesFa[jDate.jm - 1]} ${jDate.jy}`;
+document.getElementById("currentMonth").textContent = currentMonthStr;
     document.getElementById("currentMonth").textContent = currentMonthStr
 
     const monthlyTotal = this.getMonthlyTotal()
@@ -227,7 +236,7 @@ renderCalendar() {
 
     const jDate = window.jalaali.toJalaali(new Date(dateStr));
 document.getElementById("modalDate").textContent =
-  `${this.monthNamesFa[jDate.jm - 1]} ${jDate.jd}، ${jDate.jy}`;
+  `${monthNamesFa[jDate.jm - 1]} ${jDate.jd}، ${jDate.jy}`;
 
     const dayExpensesContainer = document.getElementById("dayExpenses")
     dayExpensesContainer.innerHTML = ""

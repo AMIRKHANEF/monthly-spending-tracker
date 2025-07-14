@@ -1,39 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly Spending Tracker</title>
+    <title>مدیریت هزینه‌های ماهانه</title>
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Load Jalali first -->
+    <script src="https://unpkg.com/jalaali-js/dist/jalaali.min.js"></script>
+
+    <!-- Then load your modified script -->
+    <script src="script.farsi.jalali.js"></script>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="title">Monthly Spending</h1>
+            <h1 class="title">هزینه‌های ماهانه</h1>
             <div class="month-selector">
-                <button id="prevMonth" class="nav-btn">‹</button>
+                <button id="nextMonth" class="nav-btn">‹</button>
                 <span id="currentMonth" class="current-month"></span>
-                <button id="nextMonth" class="nav-btn">›</button>
+                <button id="prevMonth" class="nav-btn">›</button>
             </div>
         </header>
 
         <div class="summary-card">
             <div class="summary-item">
-                <span class="summary-label">Total Spent</span>
-                <span id="totalSpent" class="summary-value">0 تومان</span>
+                <span class="summary-label">کل هزینه‌ها</span>
+                <span id="totalSpent" class="summary-value">۰ تومان</span>
             </div>
             <div class="summary-item">
-                <span class="summary-label">Daily Average</span>
-                <span id="dailyAverage" class="summary-value">0 تومان</span>
+                <span class="summary-label">میانگین روزانه</span>
+                <span id="dailyAverage" class="summary-value">۰ تومان</span>
             </div>
         </div>
 
         <div class="add-expense-card">
-            <h3>Add Today's Expense</h3>
+            <h3>افزودن هزینه امروز</h3>
             <div class="input-group">
-                <input type="number" id="expenseAmount" placeholder="0" step="1" min="0">
-                <input type="text" id="expenseDescription" placeholder="What did you spend on?">
-                <button id="addExpense" class="add-btn">Add Expense</button>
+                <input type="number" id="expenseAmount" placeholder="۰" step="1" min="0">
+                <input type="text" id="expenseDescription" placeholder="برای چه چیزی هزینه کردید؟">
+                <button id="addExpense" class="add-btn">افزودن هزینه</button>
             </div>
         </div>
 
@@ -42,7 +48,7 @@
         </div>
 
         <div class="expenses-list">
-            <h3>Recent Expenses</h3>
+            <h3>هزینه‌های اخیر</h3>
             <div id="expensesList" class="expenses-container"></div>
         </div>
     </div>
@@ -56,12 +62,10 @@
             <div class="modal-body">
                 <div id="dayExpenses" class="day-expenses"></div>
                 <div class="modal-total">
-                    Total: <span id="dayTotal">0 تومان</span>
+                    جمع کل: <span id="dayTotal">۰ تومان</span>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
