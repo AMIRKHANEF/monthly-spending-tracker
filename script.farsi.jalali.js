@@ -18,6 +18,10 @@ class SpendingTracker {
       "اسفند",
     ];
 
+    this.formatAmount = (amount) => {
+      return Number(amount.toFixed(0)).toLocaleString('fa-IR');
+    }
+
     this.init();
   }
 
@@ -126,12 +130,8 @@ class SpendingTracker {
     const monthlyTotal = this.getMonthlyTotal();
     const dailyAverage = this.getDailyAverage();
 
-    document.getElementById("totalSpent").textContent = `${monthlyTotal.toFixed(
-      0
-    )} تومان`;
-    document.getElementById(
-      "dailyAverage"
-    ).textContent = `${dailyAverage.toFixed(0)} تومان`;
+    document.getElementById("totalSpent").textContent = `${this.formatAmount(monthlyTotal)} تومان`;
+    document.getElementById("dailyAverage").textContent = `${this.formatAmount(dailyAverage)} تومان`;
   }
 
   getMonthlyTotal() {
@@ -229,7 +229,7 @@ class SpendingTracker {
       <span class="day-number">${day}</span>
       ${
         dayTotal > 0
-          ? `<span class="day-amount">${dayTotal.toFixed(0)} ت</span>`
+          ? `<span class="day-amount">${this.formatAmount(dayTotal)} ت</span>`
           : ""
       }
     `;
@@ -267,9 +267,7 @@ class SpendingTracker {
                           expense.timestamp
                         ).toLocaleTimeString()}</span>
                     </div>
-                    <span class="expense-amount">${expense.amount.toFixed(
-                      0
-                    )} تومان</span>
+                    <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
                 `;
         dayExpensesContainer.appendChild(expenseElement);
       });
@@ -279,9 +277,7 @@ class SpendingTracker {
       (sum, expense) => sum + expense.amount,
       0
     );
-    document.getElementById("dayTotal").textContent = `${dayTotal.toFixed(
-      0
-    )} تومان`;
+    document.getElementById("dayTotal").textContent = `${this.formatAmount(dayTotal)} تومان`;
 
     document.getElementById("dayModal").style.display = "block";
   }
@@ -330,9 +326,7 @@ class SpendingTracker {
                     }</span>
                     <span class="expense-date">${formattedDate}</span>
                 </div>
-                <span class="expense-amount">${expense.amount.toFixed(
-                  0
-                )} تومان</span>
+                <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
             `;
 
       expensesContainer.appendChild(expenseElement);
