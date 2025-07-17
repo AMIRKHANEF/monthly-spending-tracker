@@ -118,21 +118,6 @@ class SpendingTracker {
   }
 
   updateDisplay() {
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
     const jDate = window.jalaali.toJalaali(this.currentDate);
     const currentMonthStr = `${this.monthNamesFa[jDate.jm - 1]} ${jDate.jy}`;
     document.getElementById("currentMonth").textContent = currentMonthStr;
@@ -258,21 +243,6 @@ class SpendingTracker {
 
   showDayModal(dateStr, day) {
     const dayExpenses = this.expenses[dateStr] || [];
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
     const jDate = window.jalaali.toJalaali(new Date(dateStr));
     document.getElementById("modalDate").textContent = `${
       this.monthNamesFa[jDate.jm - 1]
