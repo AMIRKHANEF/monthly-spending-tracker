@@ -56,6 +56,15 @@ class SpendingTracker {
       .getElementById("closeModal")
       .addEventListener("click", () => this.closeModal());
 
+    const amountInput = document.getElementById("expenseAmount");
+    amountInput.addEventListener("input", (e) => {
+      // Remove everything that's not a digit
+      const onlyNumbers = e.target.value.replace(/\D/g, '');
+
+      // Format with commas (e.g., 11000 -> 11,000)
+      e.target.value = onlyNumbers.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    });
+
     // Close modal when clicking outside
     document.getElementById("dayModal").addEventListener("click", (e) => {
       if (e.target.id === "dayModal") this.closeModal();
@@ -64,7 +73,7 @@ class SpendingTracker {
 
   addExpense() {
     const amount = Number.parseFloat(
-      document.getElementById("expenseAmount").value
+      document.getElementById("expenseAmount").value.replace(/,/g, "")
     );
     const description = document
       .getElementById("expenseDescription")
