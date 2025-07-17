@@ -235,13 +235,13 @@ class SpendingTracker {
     `;
 
       dayElement.addEventListener("click", () =>
-        this.showDayModal(dateStr, day)
+        this.showDayModal(dateStr)
       );
       calendar.appendChild(dayElement);
     }
   }
 
-  showDayModal(dateStr, day) {
+  showDayModal(dateStr) {
     const dayExpenses = this.expenses[dateStr] || [];
     const jDate = window.jalaali.toJalaali(new Date(dateStr));
     document.getElementById("modalDate").textContent = `${
@@ -253,7 +253,7 @@ class SpendingTracker {
 
     if (dayExpenses.length === 0) {
       dayExpensesContainer.innerHTML =
-        '<p style="text-align: center; color: #718096;">No expenses for this day</p>';
+        '<p style="text-align: center; color: #718096;">هزینه ای وارد نشده است</p>';
     } else {
       dayExpenses.forEach((expense) => {
         const expenseElement = document.createElement("div");
@@ -305,7 +305,7 @@ class SpendingTracker {
 
     if (recentExpenses.length === 0) {
       expensesContainer.innerHTML =
-        '<p style="text-align: center; color: #718096;">No expenses yet. Add your first expense above!</p>';
+        '<p style="text-align: center; color: #718096;">هنوز هزینه ای وارد نشده است. لطفه هزینه خود را در بالا وارد نمایید</p>';
       return;
     }
 
@@ -313,18 +313,14 @@ class SpendingTracker {
       const expenseElement = document.createElement("div");
       expenseElement.className = "expense-item";
 
-      const expenseDate = new Date(expense.date);
-      const formattedDate = expenseDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
+      const jDate = window.jalaali.toJalaali(new Date(expense.date));
 
       expenseElement.innerHTML = `
                 <div class="expense-details">
                     <span class="expense-description">${
                       expense.description
                     }</span>
-                    <span class="expense-date">${formattedDate}</span>
+                    <span class="expense-date">${jDate.jd} ${this.monthNamesFa[jDate.jm - 1]}</span>
                 </div>
                 <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
             `;
