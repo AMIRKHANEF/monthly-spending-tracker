@@ -177,6 +177,19 @@ class SpendingTracker {
 
     document.getElementById("totalSpent").textContent = `${this.formatAmount(monthlyTotal)} تومان`
     document.getElementById("dailyAverage").textContent = `${this.formatAmount(dailyAverage)} تومان`
+
+    // Show/hide add expense card based on current month
+    const today = window.jalaali.toJalaali(new Date())
+    const isCurrentMonth = today.jy === this.currentJalaliDate.jy && today.jm === this.currentJalaliDate.jm
+
+    const addExpenseCard = document.querySelector(".add-expense-card")
+    if (addExpenseCard) {
+      if (isCurrentMonth) {
+        addExpenseCard.style.display = "block"
+      } else {
+        addExpenseCard.style.display = "none"
+      }
+    }
   }
 
   // Get total for currently displayed Persian month
@@ -280,35 +293,66 @@ class SpendingTracker {
         const expenseElement = document.createElement("div")
         expenseElement.className = "expense-item modal-expense-item"
         expenseElement.innerHTML = `
-        <div class="expense-details">
-          <span class="expense-description">${expense.description}</span>
-          <span class="expense-date">${new Date(expense.timestamp).toLocaleTimeString()}</span>
+      <div class="expense-details">
+        <span class="expense-description">${expense.description}</span>
+        <span class="expense-date">${new Date(expense.timestamp).toLocaleTimeString()}</span>
+      </div>
+      <div class="expense-actions">
+        <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
+        <div class="action-buttons">
+          <button class="edit-expense-btn" data-expense-id="${expense.id}" title="ویرایش">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+          <button class="remove-expense-btn" data-expense-id="${expense.id}" title="حذف">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3,6 5,6 21,6"></polyline>
+              <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </button>
         </div>
-        <div class="expense-actions">
-          <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
-          <div class="action-buttons">
-            <button class="edit-expense-btn" data-expense-id="${expense.id}" title="ویرایش">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg>
-            </button>
-            <button class="remove-expense-btn" data-expense-id="${expense.id}" title="حذف">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3,6 5,6 21,6"></polyline>
-                <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `
+      </div>
+    `
         dayExpensesContainer.appendChild(expenseElement)
       })
 
-      // Bind events for the new buttons
+      // Bind events for the edit/remove buttons
       this.bindModalEvents(persianDateKey)
+    }
+
+    // Add "Add Expense to This Day" button - ONLY FOR PAST DAYS
+    const today = window.jalaali.toJalaali(new Date())
+    const [currentJy, currentJm, currentJd] = [today.jy, today.jm, today.jd]
+    const [dayJy, dayJm, dayJd] = [jy, jm, jd]
+
+    // Check if the selected day is before today
+    const isPastDay =
+      dayJy < currentJy ||
+      (dayJy === currentJy && dayJm < currentJm) ||
+      (dayJy === currentJy && dayJm === currentJm && dayJd < currentJd)
+
+    if (isPastDay) {
+      const addExpenseButton = document.createElement("div")
+      addExpenseButton.className = "add-expense-to-day"
+      addExpenseButton.innerHTML = `
+        <button id="addExpenseToDay" class="add-expense-day-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          افزودن هزینه به این روز
+        </button>
+      `
+      dayExpensesContainer.appendChild(addExpenseButton)
+
+      // Bind event for add expense button
+      document.getElementById("addExpenseToDay").addEventListener("click", () => {
+        this.showAddExpenseForm(persianDateKey)
+      })
     }
 
     const dayTotal = dayExpenses.reduce((sum, expense) => sum + expense.amount, 0)
@@ -416,6 +460,138 @@ class SpendingTracker {
 
     // Refresh the modal content
     this.showDayModal(persianDateKey)
+  }
+
+  // Show add expense form for specific day
+  showAddExpenseForm(persianDateKey) {
+    const [jy, jm, jd] = persianDateKey.split("/").map(Number)
+
+    // Create add expense form
+    const addForm = document.createElement("div")
+    addForm.className = "add-expense-form"
+    addForm.innerHTML = `
+    <div class="add-form-header">
+      <h4>افزودن هزینه به ${jd} ${this.monthNamesFa[jm - 1]} ${jy}</h4>
+    </div>
+    <div class="add-form-body">
+      <input type="text" id="addDayAmount" placeholder="مبلغ" value="">
+      <input type="text" id="addDayDescription" placeholder="توضیحات" value="">
+      <div class="add-form-buttons">
+        <button id="saveAddDay" class="save-btn">افزودن</button>
+        <button id="cancelAddDay" class="cancel-btn">لغو</button>
+      </div>
+    </div>
+  `
+
+    // Replace the modal content temporarily
+    const modalBody = document.getElementById("dayExpenses")
+    const originalContent = modalBody.innerHTML
+    modalBody.innerHTML = ""
+    modalBody.appendChild(addForm)
+
+    // Handle amount input formatting
+    const amountInput = document.getElementById("addDayAmount")
+    amountInput.addEventListener("input", (e) => {
+      const onlyNumbers = e.target.value.replace(/\D/g, "")
+      e.target.value = onlyNumbers.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    })
+
+    // Focus on amount input
+    amountInput.focus()
+
+    // Handle Enter key on inputs
+    amountInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        document.getElementById("addDayDescription").focus()
+      }
+    })
+
+    document.getElementById("addDayDescription").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        document.getElementById("saveAddDay").click()
+      }
+    })
+
+    // Handle save
+    document.getElementById("saveAddDay").addEventListener("click", () => {
+      const amount = Number.parseFloat(amountInput.value.replace(/,/g, ""))
+      const description = document.getElementById("addDayDescription").value.trim()
+
+      if (!amount || amount <= 0) {
+        this.showError("لطفا مبلغ معتبری وارد کنید")
+        return
+      }
+
+      if (!description) {
+        this.showError("لطفا توضیحات را وارد کنید")
+        return
+      }
+
+      // Create new expense for the specific day
+      const expense = {
+        id: Date.now(),
+        persianDate: persianDateKey,
+        amount: amount,
+        description: description,
+        timestamp: new Date().toISOString(),
+      }
+
+      // Add to expenses
+      if (!this.expenses[persianDateKey]) {
+        this.expenses[persianDateKey] = []
+      }
+
+      this.expenses[persianDateKey].push(expense)
+      this.saveExpenses()
+
+      // Update all displays
+      this.updateDisplay()
+      this.renderCalendar()
+      this.renderRecentExpenses()
+
+      // Show success message
+      this.showSuccess("هزینه با موفقیت اضافه شد!")
+
+      // Refresh the modal content
+      this.showDayModal(persianDateKey)
+    })
+
+    // Handle cancel
+    document.getElementById("cancelAddDay").addEventListener("click", () => {
+      modalBody.innerHTML = originalContent
+      this.bindModalEvents(persianDateKey)
+    })
+  }
+
+  // Show success message
+  showSuccess(message) {
+    // Create a simple success notification
+    const notification = document.createElement("div")
+    notification.className = "success-notification"
+    notification.textContent = message
+    notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+    z-index: 10000;
+    font-weight: 600;
+    animation: slideInRight 0.3s ease-out;
+  `
+
+    document.body.appendChild(notification)
+
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.animation = "slideOutRight 0.3s ease-out"
+      setTimeout(() => {
+        document.body.removeChild(notification)
+      }, 300)
+    }, 3000)
   }
 
   // Bind events for edit/remove buttons in modal
