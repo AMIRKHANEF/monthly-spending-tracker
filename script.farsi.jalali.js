@@ -1,7 +1,7 @@
 class SpendingTracker {
   constructor() {
-    this.currentDate = new Date();
-    this.expenses = this.loadExpenses();
+    this.currentJalaliDate = window.jalaali.toJalaali(new Date())
+    this.expenses = this.loadExpenses()
 
     this.monthNamesFa = [
       "فروردین",
@@ -16,339 +16,369 @@ class SpendingTracker {
       "دی",
       "بهمن",
       "اسفند",
-    ];
+    ]
 
     this.formatAmount = (amount) => {
-      return Number(amount.toFixed(0)).toLocaleString('fa-IR');
+      return Number(amount.toFixed(0)).toLocaleString("fa-IR")
     }
 
-    this.init();
+    this.init()
   }
 
   init() {
-    this.updateDisplay();
-    this.bindEvents();
-    this.renderCalendar();
-    this.renderRecentExpenses();
+    this.updateDisplay()
+    this.bindEvents()
+    this.renderCalendar()
+    this.renderRecentExpenses()
   }
 
   bindEvents() {
-    document
-      .getElementById("addExpense")
-      .addEventListener("click", () => this.addExpense());
-    document
-      .getElementById("expenseAmount")
-      .addEventListener("keypress", (e) => {
-        if (e.key === "Enter") this.addExpense();
-      });
-    document
-      .getElementById("expenseDescription")
-      .addEventListener("keypress", (e) => {
-        if (e.key === "Enter") this.addExpense();
-      });
-    document
-      .getElementById("prevMonth")
-      .addEventListener("click", () => this.changeMonth(-1));
-    document
-      .getElementById("nextMonth")
-      .addEventListener("click", () => this.changeMonth(1));
-    document
-      .getElementById("closeModal")
-      .addEventListener("click", () => this.closeModal());
+    document.getElementById("addExpense").addEventListener("click", () => this.addExpense())
+    document.getElementById("expenseAmount").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") this.addExpense()
+    })
+    document.getElementById("expenseDescription").addEventListener("keypress", (e) => {
+      if (e.key === "Enter") this.addExpense()
+    })
+    document.getElementById("prevMonth").addEventListener("click", () => this.changeMonth(-1))
+    document.getElementById("nextMonth").addEventListener("click", () => this.changeMonth(1))
+    document.getElementById("closeModal").addEventListener("click", () => this.closeModal())
 
-    const amountInput = document.getElementById("expenseAmount");
+    const amountInput = document.getElementById("expenseAmount")
     amountInput.addEventListener("input", (e) => {
       // Remove everything that's not a digit
-      const onlyNumbers = e.target.value.replace(/\D/g, '');
+      const onlyNumbers = e.target.value.replace(/\D/g, "")
 
       // Format with commas (e.g., 11000 -> 11,000)
-      e.target.value = onlyNumbers.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    });
+      e.target.value = onlyNumbers.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    })
 
     // Close modal when clicking outside
     document.getElementById("dayModal").addEventListener("click", (e) => {
-      if (e.target.id === "dayModal") this.closeModal();
-    });
+      if (e.target.id === "dayModal") this.closeModal()
+    })
+  }
+
+  // Convert Gregorian date string to Persian date string
+  gregorianToPersianDateKey(gregorianDateStr) {
+    const gDate = new Date(gregorianDateStr)
+    const jDate = window.jalaali.toJalaali(gDate)
+    return `${jDate.jy}/${jDate.jm}/${jDate.jd}`
+  }
+
+  // Convert Persian date string to Gregorian date string
+  persianToGregorianDateKey(persianDateStr) {
+    const [jy, jm, jd] = persianDateStr.split("/").map(Number)
+    const gDate = window.jalaali.toGregorian(jy, jm, jd)
+    return `${gDate.gy}-${String(gDate.gm).padStart(2, "0")}-${String(gDate.gd).padStart(2, "0")}`
+  }
+
+  // Get today's Persian date key
+  getTodayPersianKey() {
+    const today = window.jalaali.toJalaali(new Date())
+    return `${today.jy}/${today.jm}/${today.jd}`
+  }
+
+  // Migration function to convert old data format to new format
+  migrateExpensesToPersianDates() {
+    const oldExpenses = localStorage.getItem("monthlyExpenses")
+    if (!oldExpenses) return {}
+
+    const oldData = JSON.parse(oldExpenses)
+    const newData = {}
+
+    // Convert each date key from Gregorian to Persian
+    Object.keys(oldData).forEach((gregorianDateKey) => {
+      const persianDateKey = this.gregorianToPersianDateKey(gregorianDateKey)
+      newData[persianDateKey] = oldData[gregorianDateKey]
+    })
+
+    // Save the migrated data
+    localStorage.setItem("monthlyExpenses2", JSON.stringify(newData))
+
+    console.log("Successfully migrated expenses from Gregorian to Persian calendar format")
+    return newData
   }
 
   addExpense() {
-    const amount = Number.parseFloat(
-      document.getElementById("expenseAmount").value.replace(/,/g, "")
-    );
-    const description = document
-      .getElementById("expenseDescription")
-      .value.trim();
+    const amount = Number.parseFloat(document.getElementById("expenseAmount").value.replace(/,/g, ""))
+    const description = document.getElementById("expenseDescription").value.trim()
 
     if (!amount || amount <= 0) {
-      this.showError("Please enter a valid amount");
-      return;
+      this.showError("لطفا مبلغ معتبری وارد کنید")
+      return
     }
 
     if (!description) {
-      this.showError("Please enter a description");
-      return;
+      this.showError("لطفا توضیحات را وارد کنید")
+      return
     }
 
-    const today = new Date().toISOString().split("T")[0];
+    const todayPersianKey = this.getTodayPersianKey()
     const expense = {
       id: Date.now(),
-      date: today,
+      persianDate: todayPersianKey,
       amount: amount,
       description: description,
       timestamp: new Date().toISOString(),
-    };
-
-    if (!this.expenses[today]) {
-      this.expenses[today] = [];
     }
 
-    this.expenses[today].push(expense);
-    this.saveExpenses();
+    if (!this.expenses[todayPersianKey]) {
+      this.expenses[todayPersianKey] = []
+    }
+
+    this.expenses[todayPersianKey].push(expense)
+    this.saveExpenses()
 
     // Clear inputs
-    document.getElementById("expenseAmount").value = "";
-    document.getElementById("expenseDescription").value = "";
+    document.getElementById("expenseAmount").value = ""
+    document.getElementById("expenseDescription").value = ""
 
     // Add success animation
-    const addBtn = document.getElementById("addExpense");
-    addBtn.classList.add("pulse");
-    setTimeout(() => addBtn.classList.remove("pulse"), 600);
+    const addBtn = document.getElementById("addExpense")
+    addBtn.classList.add("pulse")
+    setTimeout(() => addBtn.classList.remove("pulse"), 600)
 
-    this.updateDisplay();
-    this.renderCalendar();
-    this.renderRecentExpenses();
+    this.updateDisplay()
+    this.renderCalendar()
+    this.renderRecentExpenses()
   }
 
   showError(message) {
-    // Simple error handling - you could enhance this with a toast notification
-    alert(message);
+    alert(message)
   }
 
   changeMonth(direction) {
-    this.currentDate.setMonth(this.currentDate.getMonth() + direction);
-    this.updateDisplay();
-    this.renderCalendar();
+    // Navigate Persian calendar months
+    let newMonth = this.currentJalaliDate.jm + direction
+    let newYear = this.currentJalaliDate.jy
+
+    if (newMonth > 12) {
+      newMonth = 1
+      newYear++
+    } else if (newMonth < 1) {
+      newMonth = 12
+      newYear--
+    }
+
+    this.currentJalaliDate = { jy: newYear, jm: newMonth, jd: 1 }
+    this.updateDisplay()
+    this.renderCalendar()
+    this.renderRecentExpenses()
   }
 
   updateDisplay() {
-    const jDate = window.jalaali.toJalaali(this.currentDate);
-    const currentMonthStr = `${this.monthNamesFa[jDate.jm - 1]} ${jDate.jy}`;
-    document.getElementById("currentMonth").textContent = currentMonthStr;
-    document.getElementById("currentMonth").textContent = currentMonthStr;
+    const currentMonthStr = `${this.monthNamesFa[this.currentJalaliDate.jm - 1]} ${this.currentJalaliDate.jy}`
+    document.getElementById("currentMonth").textContent = currentMonthStr
 
-    const monthlyTotal = this.getMonthlyTotal();
-    const dailyAverage = this.getDailyAverage();
+    // Get totals for ONLY the currently displayed month
+    const monthlyTotal = this.getCurrentMonthTotal()
+    const dailyAverage = this.getCurrentMonthDailyAverage()
 
-    document.getElementById("totalSpent").textContent = `${this.formatAmount(monthlyTotal)} تومان`;
-    document.getElementById("dailyAverage").textContent = `${this.formatAmount(dailyAverage)} تومان`;
+    document.getElementById("totalSpent").textContent = `${this.formatAmount(monthlyTotal)} تومان`
+    document.getElementById("dailyAverage").textContent = `${this.formatAmount(dailyAverage)} تومان`
   }
 
-  getMonthlyTotal() {
-    const year = this.currentDate.getFullYear();
-    const month = this.currentDate.getMonth();
-    let total = 0;
+  // Get total for currently displayed Persian month
+  getCurrentMonthTotal() {
+    const currentYear = this.currentJalaliDate.jy
+    const currentMonth = this.currentJalaliDate.jm
+    let total = 0
 
-    Object.keys(this.expenses).forEach((date) => {
-      const expenseDate = new Date(date);
-      if (
-        expenseDate.getFullYear() === year &&
-        expenseDate.getMonth() === month
-      ) {
-        this.expenses[date].forEach((expense) => {
-          total += expense.amount;
-        });
+    Object.keys(this.expenses).forEach((persianDateKey) => {
+      const [year, month] = persianDateKey.split("/").map(Number)
+      if (year === currentYear && month === currentMonth) {
+        this.expenses[persianDateKey].forEach((expense) => {
+          total += expense.amount
+        })
       }
-    });
+    })
 
-    return total;
+    return total
   }
 
-  getDailyAverage() {
-    const monthlyTotal = this.getMonthlyTotal();
-    const today = new Date();
-    const isCurrentMonth =
-      today.getFullYear() === this.currentDate.getFullYear() &&
-      today.getMonth() === this.currentDate.getMonth();
+  // Calculate daily average for current displayed Persian month
+  getCurrentMonthDailyAverage() {
+    const monthlyTotal = this.getCurrentMonthTotal()
+    const today = window.jalaali.toJalaali(new Date())
+    const isCurrentMonth = today.jy === this.currentJalaliDate.jy && today.jm === this.currentJalaliDate.jm
 
-    const daysInMonth = new Date(
-      this.currentDate.getFullYear(),
-      this.currentDate.getMonth() + 1,
-      0
-    ).getDate();
-    const daysPassed = isCurrentMonth ? today.getDate() : daysInMonth;
+    // Get days in Persian month
+    const daysInMonth =
+      this.currentJalaliDate.jm <= 6
+        ? 31
+        : this.currentJalaliDate.jm <= 11
+          ? 30
+          : window.jalaali.isLeapJalaaliYear(this.currentJalaliDate.jy)
+            ? 30
+            : 29
 
-    return daysPassed > 0 ? monthlyTotal / daysPassed : 0;
+    // For current month, use days passed. For other months, use full month days
+    const daysPassed = isCurrentMonth ? today.jd : daysInMonth
+
+    return daysPassed > 0 ? monthlyTotal / daysPassed : 0
   }
 
   renderCalendar() {
-    const calendar = document.getElementById("calendar");
-    calendar.innerHTML = "";
+    const calendar = document.getElementById("calendar")
+    calendar.innerHTML = ""
 
-    const jDate = window.jalaali.toJalaali(this.currentDate);
-    const jYear = jDate.jy;
-    const jMonth = jDate.jm;
+    const jYear = this.currentJalaliDate.jy
+    const jMonth = this.currentJalaliDate.jm
 
-    const gStartDate = window.jalaali.toGregorian(jYear, jMonth, 1);
-    const firstDay = new Date(
-      gStartDate.gy,
-      gStartDate.gm - 1,
-      gStartDate.gd
-    ).getDay();
+    const gStartDate = window.jalaali.toGregorian(jYear, jMonth, 1)
+    const firstDay = new Date(gStartDate.gy, gStartDate.gm - 1, gStartDate.gd).getDay()
 
-    const today = window.jalaali.toJalaali(new Date());
-    const daysInMonth =
-      jMonth <= 6
-        ? 31
-        : jMonth <= 11
-        ? 30
-        : window.jalaali.isLeapJalaaliYear(jYear)
-        ? 30
-        : 29;
+    const today = window.jalaali.toJalaali(new Date())
+    const daysInMonth = jMonth <= 6 ? 31 : jMonth <= 11 ? 30 : window.jalaali.isLeapJalaaliYear(jYear) ? 30 : 29
 
     // Add empty cells before first day
     for (let i = 0; i < firstDay; i++) {
-      const emptyDay = document.createElement("div");
-      calendar.appendChild(emptyDay);
+      const emptyDay = document.createElement("div")
+      calendar.appendChild(emptyDay)
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
-      const gDate = window.jalaali.toGregorian(jYear, jMonth, day);
-      const dateStr = `${gDate.gy}-${String(gDate.gm).padStart(
-        2,
-        "0"
-      )}-${String(gDate.gd).padStart(2, "0")}`;
-      const dayExpenses = this.expenses[dateStr] || [];
-      const dayTotal = dayExpenses.reduce(
-        (sum, expense) => sum + expense.amount,
-        0
-      );
+      const persianDateKey = `${jYear}/${jMonth}/${day}`
+      const dayExpenses = this.expenses[persianDateKey] || []
+      const dayTotal = dayExpenses.reduce((sum, expense) => sum + expense.amount, 0)
 
-      const dayElement = document.createElement("div");
-      dayElement.className = "calendar-day";
+      const dayElement = document.createElement("div")
+      dayElement.className = "calendar-day"
 
       if (today.jy === jYear && today.jm === jMonth && today.jd === day) {
-        dayElement.classList.add("today");
+        dayElement.classList.add("today")
       }
 
       if (dayTotal > 0) {
-        dayElement.classList.add("has-expense");
+        dayElement.classList.add("has-expense")
       }
 
       dayElement.innerHTML = `
       <span class="day-number">${day}</span>
-      ${
-        dayTotal > 0
-          ? `<span class="day-amount">${this.formatAmount(dayTotal)} ت</span>`
-          : ""
-      }
-    `;
+      ${dayTotal > 0 ? `<span class="day-amount">${this.formatAmount(dayTotal)} ت</span>` : ""}
+    `
 
-      dayElement.addEventListener("click", () =>
-        this.showDayModal(dateStr)
-      );
-      calendar.appendChild(dayElement);
+      dayElement.addEventListener("click", () => this.showDayModal(persianDateKey))
+      calendar.appendChild(dayElement)
     }
   }
 
-  showDayModal(dateStr) {
-    const dayExpenses = this.expenses[dateStr] || [];
-    const jDate = window.jalaali.toJalaali(new Date(dateStr));
-    document.getElementById("modalDate").textContent = `${
-      this.monthNamesFa[jDate.jm - 1]
-    } ${jDate.jd}، ${jDate.jy}`;
+  showDayModal(persianDateKey) {
+    const dayExpenses = this.expenses[persianDateKey] || []
+    const [jy, jm, jd] = persianDateKey.split("/").map(Number)
 
-    const dayExpensesContainer = document.getElementById("dayExpenses");
-    dayExpensesContainer.innerHTML = "";
+    document.getElementById("modalDate").textContent = `${this.monthNamesFa[jm - 1]} ${jd}، ${jy}`
+
+    const dayExpensesContainer = document.getElementById("dayExpenses")
+    dayExpensesContainer.innerHTML = ""
 
     if (dayExpenses.length === 0) {
-      dayExpensesContainer.innerHTML =
-        '<p style="text-align: center; color: #718096;">هزینه ای وارد نشده است</p>';
+      dayExpensesContainer.innerHTML = '<p style="text-align: center; color: #718096;">هزینه ای وارد نشده است</p>'
     } else {
       dayExpenses.forEach((expense) => {
-        const expenseElement = document.createElement("div");
-        expenseElement.className = "expense-item";
+        const expenseElement = document.createElement("div")
+        expenseElement.className = "expense-item"
         expenseElement.innerHTML = `
                     <div class="expense-details">
-                        <span class="expense-description">${
-                          expense.description
-                        }</span>
-                        <span class="expense-date">${new Date(
-                          expense.timestamp
-                        ).toLocaleTimeString()}</span>
+                        <span class="expense-description">${expense.description}</span>
+                        <span class="expense-date">${new Date(expense.timestamp).toLocaleTimeString()}</span>
                     </div>
                     <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
-                `;
-        dayExpensesContainer.appendChild(expenseElement);
-      });
+                `
+        dayExpensesContainer.appendChild(expenseElement)
+      })
     }
 
-    const dayTotal = dayExpenses.reduce(
-      (sum, expense) => sum + expense.amount,
-      0
-    );
-    document.getElementById("dayTotal").textContent = `${this.formatAmount(dayTotal)} تومان`;
+    const dayTotal = dayExpenses.reduce((sum, expense) => sum + expense.amount, 0)
+    document.getElementById("dayTotal").textContent = `${this.formatAmount(dayTotal)} تومان`
 
-    document.getElementById("dayModal").style.display = "block";
+    document.getElementById("dayModal").style.display = "block"
   }
 
   closeModal() {
-    document.getElementById("dayModal").style.display = "none";
+    document.getElementById("dayModal").style.display = "none"
   }
 
   renderRecentExpenses() {
-    const expensesContainer = document.getElementById("expensesList");
-    expensesContainer.innerHTML = "";
+    const expensesContainer = document.getElementById("expensesList")
+    expensesContainer.innerHTML = ""
 
-    // Get all expenses and sort by timestamp (most recent first)
-    const allExpenses = [];
-    Object.keys(this.expenses).forEach((date) => {
-      this.expenses[date].forEach((expense) => {
-        allExpenses.push({ ...expense, date });
-      });
-    });
+    // Get expenses for current displayed month only
+    const currentMonthExpenses = this.getCurrentMonthExpenses()
 
-    allExpenses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-    // Show only the 10 most recent expenses
-    const recentExpenses = allExpenses.slice(0, 10);
-
-    if (recentExpenses.length === 0) {
+    if (currentMonthExpenses.length === 0) {
       expensesContainer.innerHTML =
-        '<p style="text-align: center; color: #718096;">هنوز هزینه ای وارد نشده است. لطفه هزینه خود را در بالا وارد نمایید</p>';
-      return;
+        '<p style="text-align: center; color: #718096;">این ماه هنوز هزینه ای وارد نشده است.</p>'
+      return
     }
 
-    recentExpenses.forEach((expense) => {
-      const expenseElement = document.createElement("div");
-      expenseElement.className = "expense-item";
+    // Show recent expenses for current month (up to 10)
+    const recentExpenses = currentMonthExpenses.slice(0, 10)
 
-      const jDate = window.jalaali.toJalaali(new Date(expense.date));
+    recentExpenses.forEach((expense) => {
+      const expenseElement = document.createElement("div")
+      expenseElement.className = "expense-item"
+
+      const [jy, jm, jd] = expense.persianDate.split("/").map(Number)
 
       expenseElement.innerHTML = `
                 <div class="expense-details">
-                    <span class="expense-description">${
-                      expense.description
-                    }</span>
-                    <span class="expense-date">${jDate.jd} ${this.monthNamesFa[jDate.jm - 1]}</span>
+                    <span class="expense-description">${expense.description}</span>
+                    <span class="expense-date">${jd} ${this.monthNamesFa[jm - 1]}</span>
                 </div>
                 <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
-            `;
+            `
 
-      expensesContainer.appendChild(expenseElement);
-    });
+      expensesContainer.appendChild(expenseElement)
+    })
+  }
+
+  // Get expenses for currently displayed Persian month
+  getCurrentMonthExpenses() {
+    const currentYear = this.currentJalaliDate.jy
+    const currentMonth = this.currentJalaliDate.jm
+    const monthExpenses = []
+
+    Object.keys(this.expenses).forEach((persianDateKey) => {
+      const [year, month] = persianDateKey.split("/").map(Number)
+      if (year === currentYear && month === currentMonth) {
+        this.expenses[persianDateKey].forEach((expense) => {
+          monthExpenses.push({ ...expense, persianDate: persianDateKey })
+        })
+      }
+    })
+
+    // Sort by timestamp (most recent first)
+    monthExpenses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+
+    return monthExpenses
   }
 
   loadExpenses() {
-    const stored = localStorage.getItem("monthlyExpenses");
-    return stored ? JSON.parse(stored) : {};
+    // First check if the new format exists
+    const newFormatData = localStorage.getItem("monthlyExpenses2")
+    if (newFormatData) {
+      return JSON.parse(newFormatData)
+    }
+
+    // If new format doesn't exist, check for old format and migrate
+    const oldFormatData = localStorage.getItem("monthlyExpenses")
+    if (oldFormatData) {
+      console.log("Found old format data, migrating to Persian calendar format...")
+      return this.migrateExpensesToPersianDates()
+    }
+
+    // If neither exists, return empty object
+    return {}
   }
 
   saveExpenses() {
-    localStorage.setItem("monthlyExpenses", JSON.stringify(this.expenses));
+    localStorage.setItem("monthlyExpenses2", JSON.stringify(this.expenses))
   }
 }
 
 // Initialize the app when the page loads
 document.addEventListener("DOMContentLoaded", () => {
-  new SpendingTracker();
-});
+  new SpendingTracker()
+})
