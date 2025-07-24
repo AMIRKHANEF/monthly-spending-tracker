@@ -278,22 +278,166 @@ class SpendingTracker {
     } else {
       dayExpenses.forEach((expense) => {
         const expenseElement = document.createElement("div")
-        expenseElement.className = "expense-item"
+        expenseElement.className = "expense-item modal-expense-item"
         expenseElement.innerHTML = `
-                    <div class="expense-details">
-                        <span class="expense-description">${expense.description}</span>
-                        <span class="expense-date">${new Date(expense.timestamp).toLocaleTimeString()}</span>
-                    </div>
-                    <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
-                `
+        <div class="expense-details">
+          <span class="expense-description">${expense.description}</span>
+          <span class="expense-date">${new Date(expense.timestamp).toLocaleTimeString()}</span>
+        </div>
+        <div class="expense-actions">
+          <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
+          <div class="action-buttons">
+            <button class="edit-expense-btn" data-expense-id="${expense.id}" title="ویرایش">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+            <button class="remove-expense-btn" data-expense-id="${expense.id}" title="حذف">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3,6 5,6 21,6"></polyline>
+                <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `
         dayExpensesContainer.appendChild(expenseElement)
       })
+
+      // Bind events for the new buttons
+      this.bindModalEvents(persianDateKey)
     }
 
     const dayTotal = dayExpenses.reduce((sum, expense) => sum + expense.amount, 0)
     document.getElementById("dayTotal").textContent = `${this.formatAmount(dayTotal)} تومان`
 
     document.getElementById("dayModal").style.display = "block"
+  }
+
+  // Edit expense functionality
+  editExpense(persianDateKey, expenseId) {
+    const dayExpenses = this.expenses[persianDateKey] || []
+    const expense = dayExpenses.find((exp) => exp.id === expenseId)
+
+    if (!expense) return
+
+    // Create edit form in modal
+    const editForm = document.createElement("div")
+    editForm.className = "edit-expense-form"
+    editForm.innerHTML = `
+    <div class="edit-form-header">
+      <h4>ویرایش هزینه</h4>
+    </div>
+    <div class="edit-form-body">
+      <input type="text" id="editAmount" value="${expense.amount}" placeholder="مبلغ">
+      <input type="text" id="editDescription" value="${expense.description}" placeholder="توضیحات">
+      <div class="edit-form-buttons">
+        <button id="saveEdit" class="save-btn">ذخیره</button>
+        <button id="cancelEdit" class="cancel-btn">لغو</button>
+      </div>
+    </div>
+  `
+
+    // Replace the modal content temporarily
+    const modalBody = document.getElementById("dayExpenses")
+    const originalContent = modalBody.innerHTML
+    modalBody.innerHTML = ""
+    modalBody.appendChild(editForm)
+
+    // Handle amount input formatting
+    const amountInput = document.getElementById("editAmount")
+    amountInput.addEventListener("input", (e) => {
+      const onlyNumbers = e.target.value.replace(/\D/g, "")
+      e.target.value = onlyNumbers.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    })
+
+    // Handle save
+    document.getElementById("saveEdit").addEventListener("click", () => {
+      const newAmount = Number.parseFloat(amountInput.value.replace(/,/g, ""))
+      const newDescription = document.getElementById("editDescription").value.trim()
+
+      if (!newAmount || newAmount <= 0) {
+        this.showError("لطفا مبلغ معتبری وارد کنید")
+        return
+      }
+
+      if (!newDescription) {
+        this.showError("لطفا توضیحات را وارد کنید")
+        return
+      }
+
+      // Update the expense
+      expense.amount = newAmount
+      expense.description = newDescription
+      expense.lastModified = new Date().toISOString()
+
+      this.saveExpenses()
+      this.updateDisplay()
+      this.renderCalendar()
+      this.renderRecentExpenses()
+
+      // Refresh the modal content
+      this.showDayModal(persianDateKey)
+    })
+
+    // Handle cancel
+    document.getElementById("cancelEdit").addEventListener("click", () => {
+      modalBody.innerHTML = originalContent
+      this.bindModalEvents(persianDateKey)
+    })
+  }
+
+  // Remove expense functionality
+  removeExpense(persianDateKey, expenseId) {
+    if (!confirm("آیا از حذف این هزینه اطمینان دارید؟")) {
+      return
+    }
+
+    const dayExpenses = this.expenses[persianDateKey] || []
+    const expenseIndex = dayExpenses.findIndex((exp) => exp.id === expenseId)
+
+    if (expenseIndex === -1) return
+
+    // Remove the expense
+    dayExpenses.splice(expenseIndex, 1)
+
+    // If no expenses left for this day, remove the day entry
+    if (dayExpenses.length === 0) {
+      delete this.expenses[persianDateKey]
+    }
+
+    this.saveExpenses()
+    this.updateDisplay()
+    this.renderCalendar()
+    this.renderRecentExpenses()
+
+    // Refresh the modal content
+    this.showDayModal(persianDateKey)
+  }
+
+  // Bind events for edit/remove buttons in modal
+  bindModalEvents(persianDateKey) {
+    const editButtons = document.querySelectorAll(".edit-expense-btn")
+    const removeButtons = document.querySelectorAll(".remove-expense-btn")
+
+    editButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        // Get the expense ID from the button, not the SVG element
+        const expenseId = Number.parseInt(btn.dataset.expenseId)
+        this.editExpense(persianDateKey, expenseId)
+      })
+    })
+
+    removeButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        // Get the expense ID from the button, not the SVG element
+        const expenseId = Number.parseInt(btn.dataset.expenseId)
+        this.removeExpense(persianDateKey, expenseId)
+      })
+    })
   }
 
   closeModal() {
