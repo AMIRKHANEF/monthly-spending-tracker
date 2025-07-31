@@ -1,3 +1,10 @@
+:root {
+  --theme-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --theme-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --theme-accent: #667eea;
+  --theme-text: #333;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,10 +13,11 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--theme-primary);
   min-height: 100vh;
-  color: #333;
+  color: var(--theme-text);
   line-height: 1.6;
+  transition: all 0.5s ease;
 }
 
 .container {
@@ -28,6 +36,62 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Cultural Header Styles */
+.cultural-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  animation: slideDown 0.8s ease-out;
+}
+
+.cultural-decorations {
+  font-size: 2rem;
+  margin-bottom: 15px;
+  letter-spacing: 10px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.cultural-greeting {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--theme-accent);
+  margin-bottom: 10px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cultural-quote {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #4a5568;
+  margin-bottom: 15px;
+  line-height: 1.8;
+  font-family: "Vazir", "Tahoma", sans-serif;
+}
+
+.cultural-message {
+  font-size: 0.95rem;
+  color: #718096;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 12px 20px;
+  border-radius: 12px;
+  border-left: 4px solid var(--theme-accent);
 }
 
 .header {
@@ -134,14 +198,14 @@ body {
 .summary-value {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #4a5568;
+  color: var(--theme-text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif, "Vazir",
     "Tahoma";
 }
 
 .add-expense-card h3 {
   margin-bottom: 20px;
-  color: #4a5568;
+  color: var(--theme-text);
   font-weight: 600;
 }
 
@@ -164,13 +228,13 @@ body {
 
 .input-group input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--theme-accent);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
   transform: translateY(-2px);
 }
 
 .add-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--theme-secondary);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -237,7 +301,7 @@ body {
 }
 
 .calendar-day.has-expense {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--theme-secondary);
   color: white;
   font-weight: 600;
 }
@@ -247,8 +311,35 @@ body {
 }
 
 .calendar-day.today {
-  border: 2px solid #667eea;
+  border: 2px solid var(--theme-accent);
   font-weight: 700;
+}
+
+.calendar-day.special-day {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+.special-icon {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.7rem;
+  animation: sparkle 2s infinite;
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2) rotate(180deg);
+    opacity: 0.8;
+  }
 }
 
 .day-number {
@@ -276,7 +367,7 @@ body {
 
 .expenses-list h3 {
   margin-bottom: 20px;
-  color: #4a5568;
+  color: var(--theme-text);
   font-weight: 600;
 }
 
@@ -288,7 +379,7 @@ body {
   margin-bottom: 10px;
   background: #f8fafc;
   border-radius: 12px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--theme-accent);
   transition: all 0.3s ease;
   animation: slideIn 0.5s ease-out;
 }
@@ -317,7 +408,7 @@ body {
 
 .expense-description {
   font-weight: 600;
-  color: #4a5568;
+  color: var(--theme-text);
 }
 
 .expense-date {
@@ -377,7 +468,7 @@ body {
 }
 
 .modal-header h3 {
-  color: #4a5568;
+  color: var(--theme-text);
   font-weight: 600;
 }
 
@@ -394,7 +485,7 @@ body {
 
 .close-btn:hover {
   background: #f7fafc;
-  color: #4a5568;
+  color: var(--theme-text);
 }
 
 .modal-body {
@@ -411,7 +502,7 @@ body {
   text-align: center;
   font-size: 1.2rem;
   font-weight: 700;
-  color: #4a5568;
+  color: var(--theme-text);
   padding: 15px;
   background: #f8fafc;
   border-radius: 12px;
@@ -465,7 +556,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* iOS touch improvements */
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -474,7 +564,7 @@ body {
 }
 
 .edit-expense-btn {
-  color: #667eea;
+  color: var(--theme-accent);
 }
 
 .edit-expense-btn:hover {
@@ -494,10 +584,10 @@ body {
 .edit-expense-btn svg,
 .remove-expense-btn svg {
   pointer-events: none;
-  /* Ensure SVG doesn't interfere with touch events */
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
+  touch-action: manipulation;
 }
 
 .edit-expense-form {
@@ -508,7 +598,7 @@ body {
 }
 
 .edit-form-header h4 {
-  color: #4a5568;
+  color: var(--theme-text);
   margin-bottom: 15px;
   font-weight: 600;
 }
@@ -530,7 +620,7 @@ body {
 
 .edit-form-body input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--theme-accent);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -552,7 +642,7 @@ body {
 }
 
 .save-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--theme-secondary);
   color: white;
 }
 
@@ -563,7 +653,7 @@ body {
 
 .cancel-btn {
   background: #e2e8f0;
-  color: #4a5568;
+  color: var(--theme-text);
 }
 
 .cancel-btn:hover {
@@ -663,8 +753,37 @@ body {
   }
 }
 
-.success-notification {
+.themed-notification {
   animation: slideInRight 0.3s ease-out;
+}
+
+/* Theme-specific styles */
+.theme-nowruz {
+  --spring-glow: 0 0 20px rgba(72, 187, 120, 0.3);
+}
+
+.theme-nowruz .calendar-day.today {
+  box-shadow: var(--spring-glow);
+}
+
+.theme-yalda {
+  --winter-glow: 0 0 20px rgba(229, 62, 62, 0.3);
+}
+
+.theme-yalda .calendar-day.today {
+  box-shadow: var(--winter-glow);
+}
+
+.theme-summer .calendar-day.has-expense {
+  background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+}
+
+.theme-autumn .calendar-day.has-expense {
+  background: linear-gradient(135deg, #d69e2e 0%, #b7791f 100%);
+}
+
+.theme-winter .calendar-day.has-expense {
+  background: linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%);
 }
 
 @media (max-width: 768px) {
@@ -674,6 +793,23 @@ body {
 
   .title {
     font-size: 2rem;
+  }
+
+  .cultural-header {
+    padding: 20px;
+  }
+
+  .cultural-decorations {
+    font-size: 1.5rem;
+    letter-spacing: 5px;
+  }
+
+  .cultural-greeting {
+    font-size: 1.2rem;
+  }
+
+  .cultural-quote {
+    font-size: 1rem;
   }
 
   .summary-card {
@@ -703,6 +839,10 @@ body {
   }
 
   .day-amount {
+    font-size: 0.6rem;
+  }
+
+  .special-icon {
     font-size: 0.6rem;
   }
 }
@@ -747,5 +887,285 @@ body {
 
   .day-name {
     font-size: 0.55rem;
+  }
+
+  .cultural-message {
+    font-size: 0.85rem;
+    padding: 10px 15px;
+  }
+}
+
+/* Theme Control Button */
+.theme-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+
+.theme-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* Theme Selector Modal */
+.theme-selector-modal .modal-content {
+  max-width: 600px;
+  max-height: 85vh;
+}
+
+.theme-control-section {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+}
+
+.theme-toggle-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.theme-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.theme-toggle-label input[type="checkbox"] {
+  display: none;
+}
+
+.theme-toggle-slider {
+  position: relative;
+  width: 50px;
+  height: 24px;
+  background: #cbd5e0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle-slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle-label input:checked + .theme-toggle-slider {
+  background: var(--theme-accent);
+}
+
+.theme-toggle-label input:checked + .theme-toggle-slider::before {
+  transform: translateX(26px);
+}
+
+.theme-toggle-description {
+  font-size: 0.9rem;
+  color: #718096;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.theme-selection-section {
+  margin-bottom: 25px;
+}
+
+.theme-selection-section h4 {
+  margin-bottom: 15px;
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.theme-option:hover {
+  border-color: var(--theme-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.theme-option.active {
+  border-color: var(--theme-accent);
+  background: rgba(102, 126, 234, 0.05);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.theme-preview {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.theme-preview.auto-theme {
+  background: linear-gradient(45deg, #48bb78, #667eea, #d69e2e, #e53e3e);
+  background-size: 400% 400%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.theme-name {
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.theme-description {
+  font-size: 0.8rem;
+  color: #718096;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.current-theme-info {
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.current-theme-info h4 {
+  margin-bottom: 15px;
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.current-theme-display {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.current-theme-preview {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.current-theme-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.current-theme-name {
+  font-weight: 700;
+  color: #4a5568;
+  font-size: 1.1rem;
+}
+
+.current-theme-greeting {
+  color: var(--theme-accent);
+  font-weight: 600;
+}
+
+.current-theme-quote {
+  font-size: 0.9rem;
+  color: #718096;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .month-selector {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* .theme-btn {
+    order: -1;
+    padding: 6px;
+    position: absolute;
+    right: 15px;
+  } */
+
+  .theme-options {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+  }
+
+  .theme-option {
+    padding: 12px;
+  }
+
+  .theme-preview {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .current-theme-display {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .current-theme-preview {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
   }
 }

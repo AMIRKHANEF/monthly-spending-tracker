@@ -18,7 +18,7 @@ class SpendingTracker {
       "اسفند",
     ]
 
-    // Persian day names (Saturday is the first day of the week in Persian calendar)
+    // Persian day names
     this.dayNamesFa = [
       "یکشنبه", // Sunday
       "دوشنبه", // Monday
@@ -29,6 +29,99 @@ class SpendingTracker {
       "شنبه", // Saturday
     ]
 
+    // Persian Cultural Themes
+    this.culturalThemes = {
+      nowruz: {
+        name: "نوروز",
+        months: [1], // Farvardin
+        colors: {
+          primary: "linear-gradient(135deg, #48bb78 0%, #38a169 100%)",
+          secondary: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+          accent: "#48bb78",
+          text: "#2d3748",
+        },
+        decorations: "🌸🌱🌿🦋",
+        greeting: "نوروزتان پیروز! سال نو مبارک",
+        quote: "نوروز آمد و بهار جان، خوش آمدی ای عید ایران",
+        specialMessage: "در ایام نوروز، هزینه‌هایتان را با دقت کنترل کنید تا سال خوبی داشته باشید!",
+      },
+      spring: {
+        name: "بهار",
+        months: [1, 2, 3], // Farvardin, Ordibehesht, Khordad
+        colors: {
+          primary: "linear-gradient(135deg, #48bb78 0%, #38a169 100%)",
+          secondary: "linear-gradient(135deg, #68d391 0%, #48bb78 100%)",
+          accent: "#48bb78",
+          text: "#2d3748",
+        },
+        decorations: "",
+        greeting: "مدیریت هزینه‌های ماهانه",
+        quote: "",
+        specialMessage: "",
+      },
+      summer: {
+        name: "تابستان",
+        months: [4, 5, 6], // Tir, Mordad, Shahrivar
+        colors: {
+          primary: "linear-gradient(135deg, #f6ad55 0%, #ed8936 100%)",
+          secondary: "linear-gradient(135deg, #fed7aa 0%, #f6ad55 100%)",
+          accent: "#ed8936",
+          text: "#744210",
+        },
+        decorations: "",
+        greeting: "مدیریت هزینه‌های ماهانه",
+        quote: "",
+        specialMessage: "",
+      },
+      autumn: {
+        name: "پاییز",
+        months: [7, 8, 9], // Mehr, Aban, Azar
+        colors: {
+          primary: "linear-gradient(135deg, #d69e2e 0%, #b7791f 100%)",
+          secondary: "linear-gradient(135deg, #faf089 0%, #d69e2e 100%)",
+          accent: "#d69e2e",
+          text: "#744210",
+        },
+        decorations: "",
+        greeting: "مدیریت هزینه‌های ماهانه",
+        quote: "",
+        specialMessage: "",
+      },
+      winter: {
+        name: "زمستان",
+        months: [10, 11, 12], // Dey, Bahman, Esfand
+        colors: {
+          primary: "linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%)",
+          secondary: "linear-gradient(135deg, #bee3f8 0%, #4299e1 100%)",
+          accent: "#4299e1",
+          text: "#2a4365",
+        },
+        decorations: "",
+        greeting: "مدیریت هزینه‌های ماهانه",
+        quote: "",
+        specialMessage: "",
+      },
+      yalda: {
+        name: "شب یلدا",
+        months: [9], // Azar (but specific to around 30th)
+        colors: {
+          primary: "linear-gradient(135deg, #e53e3e 0%, #c53030 100%)",
+          secondary: "linear-gradient(135deg, #feb2b2 0%, #e53e3e 100%)",
+          accent: "#e53e3e",
+          text: "#742a2a",
+        },
+        decorations: "🍎🍇🕯️📚",
+        greeting: "شب یلدایتان مبارک",
+        quote: "شب یلدا، شب عشق و مهربانی، شب گردهمایی و شیرینی",
+        specialMessage: "شب یلدا، شب خانواده است. هزینه‌های مهمانی را برنامه‌ریزی کنید!",
+      },
+    }
+
+    // Theme control settings
+    this.themeSettings = this.loadThemeSettings()
+    this.isThemeEnabled = this.themeSettings.enabled === true // Default to false
+    this.manualTheme = this.themeSettings.manualTheme || null // null means auto-detect
+
     this.formatAmount = (amount) => {
       return Number(amount.toFixed(0)).toLocaleString("fa-IR")
     }
@@ -37,10 +130,311 @@ class SpendingTracker {
   }
 
   init() {
+    this.applyCurrentTheme()
     this.updateDisplay()
     this.bindEvents()
     this.renderCalendar()
     this.renderRecentExpenses()
+  }
+
+  // Load theme settings from localStorage
+  loadThemeSettings() {
+    const saved = localStorage.getItem("METthemeSettings")
+    if (saved) {
+      return JSON.parse(saved)
+    }
+    return { enabled: false, manualTheme: null } // Default to false
+  }
+
+  // Save theme settings to localStorage
+  saveThemeSettings() {
+    localStorage.setItem(
+      "METthemeSettings",
+      JSON.stringify({
+        enabled: this.isThemeEnabled,
+        manualTheme: this.manualTheme,
+      }),
+    )
+  }
+
+  // Get effective theme (manual override or auto-detected)
+  getEffectiveTheme() {
+    if (!this.isThemeEnabled) {
+      return this.getDefaultTheme()
+    }
+
+    if (this.manualTheme) {
+      return this.culturalThemes[this.manualTheme]
+    }
+
+    return this.getCurrentTheme()
+  }
+
+  // Default minimal theme
+  getDefaultTheme() {
+    return {
+      name: "پیش‌فرض",
+      colors: {
+        primary: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        secondary: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        accent: "#667eea",
+        text: "#333",
+      },
+      decorations: "",
+      greeting: "مدیریت هزینه‌های ماهانه",
+      quote: "",
+      specialMessage: "",
+    }
+  }
+
+  // Toggle theme system on/off
+  toggleThemeSystem() {
+    this.isThemeEnabled = !this.isThemeEnabled
+    this.saveThemeSettings()
+    this.applyCurrentTheme()
+    this.updateThemeButton()
+  }
+
+  // Set manual theme
+  setManualTheme(themeKey) {
+    this.manualTheme = themeKey
+    this.saveThemeSettings()
+    this.applyCurrentTheme()
+    this.updateThemeButton()
+  }
+
+  // Reset to auto theme
+  resetToAutoTheme() {
+    this.manualTheme = null
+    this.saveThemeSettings()
+    this.applyCurrentTheme()
+    this.updateThemeButton()
+  }
+
+  // Update theme button appearance
+  updateThemeButton() {
+    const themeBtn = document.getElementById("themeToggle")
+    if (themeBtn) {
+      const currentTheme = this.getEffectiveTheme()
+      const isAuto = this.isThemeEnabled && !this.manualTheme
+
+      if (!this.isThemeEnabled) {
+        themeBtn.innerHTML = "🎨"
+        themeBtn.title = "فعال‌سازی تم‌های فرهنگی"
+      } else if (isAuto) {
+        themeBtn.innerHTML = "🌟"
+        themeBtn.title = `تم خودکار: ${currentTheme.name}`
+      } else {
+        themeBtn.innerHTML = "🎭"
+        themeBtn.title = `تم دستی: ${currentTheme.name}`
+      }
+    }
+  }
+
+  // Show theme selector modal
+  showThemeSelector() {
+    const modal = document.createElement("div")
+    modal.className = "modal theme-selector-modal"
+    modal.id = "themeModal"
+    modal.style.display = "block"
+
+    const currentTheme = this.getEffectiveTheme()
+    const isAuto = this.isThemeEnabled && !this.manualTheme
+
+    modal.innerHTML = `
+      <div class="modal-content theme-modal-content">
+        <div class="modal-header">
+          <h3>انتخاب تم و ظاهر</h3>
+          <button id="closeThemeModal" class="close-btn">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="theme-control-section">
+            <div class="theme-toggle-container">
+              <label class="theme-toggle-label">
+                <input type="checkbox" id="themeEnabledToggle" ${this.isThemeEnabled ? "checked" : ""}>
+                <span class="theme-toggle-slider"></span>
+                <span class="theme-toggle-text">تم‌های فرهنگی فارسی</span>
+              </label>
+              <p class="theme-toggle-description">
+                ${this.isThemeEnabled ? "تم‌ها بر اساس تقویم فارسی و فصول تغییر می‌کنند" : "استفاده از تم ساده و یکنواخت"}
+              </p>
+            </div>
+          </div>
+
+          ${
+            this.isThemeEnabled
+              ? `
+            <div class="theme-selection-section">
+              <h4>انتخاب تم:</h4>
+              <div class="theme-options">
+                <div class="theme-option ${isAuto ? "active" : ""}" data-theme="auto">
+                  <div class="theme-preview auto-theme">
+                    <span class="theme-icon">🌟</span>
+                  </div>
+                  <span class="theme-name">خودکار</span>
+                  <span class="theme-description">بر اساس تاریخ فارسی</span>
+                </div>
+
+                ${Object.keys(this.culturalThemes)
+                  .map((themeKey) => {
+                    const theme = this.culturalThemes[themeKey]
+                    const isActive = this.manualTheme === themeKey
+                    return `
+                    <div class="theme-option ${isActive ? "active" : ""}" data-theme="${themeKey}">
+                      <div class="theme-preview" style="background: ${theme.colors.primary}">
+                        <span class="theme-icon">${theme.decorations.charAt(0)}</span>
+                      </div>
+                      <span class="theme-name">${theme.name}</span>
+                      <span class="theme-description">${theme.greeting}</span>
+                    </div>
+                  `
+                  })
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="current-theme-info">
+              <h4>تم فعلی:</h4>
+              <div class="current-theme-display">
+                <div class="current-theme-preview" style="background: ${currentTheme.colors.primary}">
+                  <span class="current-theme-icon">${currentTheme.decorations.charAt(0) || "🎨"}</span>
+                </div>
+                <div class="current-theme-details">
+                  <span class="current-theme-name">${currentTheme.name}</span>
+                  <span class="current-theme-greeting">${currentTheme.greeting}</span>
+                  ${currentTheme.quote ? `<span class="current-theme-quote">${currentTheme.quote}</span>` : ""}
+                </div>
+              </div>
+            </div>
+          `
+              : ""
+          }
+        </div>
+      </div>
+    `
+
+    document.body.appendChild(modal)
+
+    // Handle theme enabled toggle
+    document.getElementById("themeEnabledToggle").addEventListener("change", (e) => {
+      this.isThemeEnabled = e.target.checked
+      this.saveThemeSettings()
+      this.applyCurrentTheme()
+      document.body.removeChild(modal)
+      this.showThemeSelector() // Refresh modal
+    })
+
+    // Handle theme selection
+    modal.querySelectorAll(".theme-option").forEach((option) => {
+      option.addEventListener("click", () => {
+        const themeKey = option.dataset.theme
+
+        if (themeKey === "auto") {
+          this.resetToAutoTheme()
+        } else {
+          this.setManualTheme(themeKey)
+        }
+
+        document.body.removeChild(modal)
+        this.showSuccess("تم با موفقیت تغییر کرد!")
+      })
+    })
+
+    // Handle close modal
+    document.getElementById("closeThemeModal").addEventListener("click", () => {
+      document.body.removeChild(modal)
+    })
+
+    // Close modal when clicking outside
+    modal.addEventListener("click", (e) => {
+      if (e.target.id === "themeModal") {
+        document.body.removeChild(modal)
+      }
+    })
+  }
+
+  // Get current cultural theme based on Persian date
+  getCurrentTheme() {
+    const currentMonth = this.currentJalaliDate.jm
+    const currentDay = this.currentJalaliDate.jd
+
+    // Special event: Yalda Night (around 30th of Azar)
+    if (currentMonth === 9 && currentDay >= 28) {
+      return this.culturalThemes.yalda
+    }
+
+    // Special event: Nowruz (1st of Farvardin)
+    if (currentMonth === 1 && currentDay <= 13) {
+      return this.culturalThemes.nowruz
+    }
+
+    // Seasonal themes
+    if ([1, 2, 3].includes(currentMonth)) {
+      return this.culturalThemes.spring
+    } else if ([4, 5, 6].includes(currentMonth)) {
+      return this.culturalThemes.summer
+    } else if ([7, 8, 9].includes(currentMonth)) {
+      return this.culturalThemes.autumn
+    } else {
+      return this.culturalThemes.winter
+    }
+  }
+
+  // Apply current theme to the page
+  applyCurrentTheme() {
+    const theme = this.getEffectiveTheme()
+    const root = document.documentElement
+
+    // Apply CSS custom properties
+    root.style.setProperty("--theme-primary", theme.colors.primary)
+    root.style.setProperty("--theme-secondary", theme.colors.secondary)
+    root.style.setProperty("--theme-accent", theme.colors.accent)
+    root.style.setProperty("--theme-text", theme.colors.text)
+
+    // Update body background
+    document.body.style.background = theme.colors.primary
+
+    // Add theme class to body
+    document.body.className = `theme-${theme.name.toLowerCase().replace(/\s+/g, "-")}`
+
+    // Update cultural header only if themes are enabled
+    if (this.isThemeEnabled && (theme.decorations || theme.quote || theme.specialMessage)) {
+      this.updateCulturalHeader(theme)
+    } else {
+      this.removeCulturalHeader()
+    }
+
+    // Update theme button
+    this.updateThemeButton()
+  }
+
+  // Remove cultural header
+  removeCulturalHeader() {
+    const existingHeader = document.querySelector(".cultural-header")
+    if (existingHeader) {
+      existingHeader.remove()
+    }
+  }
+
+  // Update cultural header with theme-specific content
+  updateCulturalHeader(theme) {
+    const existingHeader = document.querySelector(".cultural-header")
+    if (existingHeader) {
+      existingHeader.remove()
+    }
+
+    const culturalHeader = document.createElement("div")
+    culturalHeader.className = "cultural-header"
+    culturalHeader.innerHTML = `
+      <div class="cultural-decorations">${theme.decorations}</div>
+      <div class="cultural-greeting">${theme.greeting}</div>
+      <div class="cultural-quote">${theme.quote}</div>
+      <div class="cultural-message">${theme.specialMessage}</div>
+    `
+
+    const container = document.querySelector(".container")
+    const header = document.querySelector(".header")
+    container.insertBefore(culturalHeader, header.nextSibling)
   }
 
   bindEvents() {
@@ -68,6 +462,8 @@ class SpendingTracker {
     document.getElementById("dayModal").addEventListener("click", (e) => {
       if (e.target.id === "dayModal") this.closeModal()
     })
+
+    document.getElementById("themeToggle").addEventListener("click", () => this.showThemeSelector())
   }
 
   // Get Persian day name for a given Jalali date
@@ -116,7 +512,6 @@ class SpendingTracker {
 
     // Save the migrated data
     localStorage.setItem("monthlyExpenses2", JSON.stringify(newData))
-
     console.log("Successfully migrated expenses from Gregorian to Persian calendar format")
     return newData
   }
@@ -169,6 +564,38 @@ class SpendingTracker {
     alert(message)
   }
 
+  // Show themed success message
+  showSuccess(message) {
+    const theme = this.getEffectiveTheme()
+    const notification = document.createElement("div")
+    notification.className = "success-notification themed-notification"
+    notification.textContent = message
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${theme.colors.secondary};
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+      z-index: 10000;
+      font-weight: 600;
+      animation: slideInRight 0.3s ease-out;
+    `
+
+    document.body.appendChild(notification)
+
+    setTimeout(() => {
+      notification.style.animation = "slideOutRight 0.3s ease-out"
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification)
+        }
+      }, 300)
+    }, 3000)
+  }
+
   changeMonth(direction) {
     // Navigate Persian calendar months
     let newMonth = this.currentJalaliDate.jm + direction
@@ -183,6 +610,10 @@ class SpendingTracker {
     }
 
     this.currentJalaliDate = { jy: newYear, jm: newMonth, jd: 1 }
+
+    // Reapply theme when month changes
+    this.applyCurrentTheme()
+
     this.updateDisplay()
     this.renderCalendar()
     this.renderRecentExpenses()
@@ -249,7 +680,6 @@ class SpendingTracker {
 
     // For current month, use days passed. For other months, use full month days
     const daysPassed = isCurrentMonth ? today.jd : daysInMonth
-
     return daysPassed > 0 ? monthlyTotal / daysPassed : 0
   }
 
@@ -291,15 +721,43 @@ class SpendingTracker {
         dayElement.classList.add("has-expense")
       }
 
+      // Add special day highlighting
+      if (this.isSpecialDay(jYear, jMonth, day)) {
+        dayElement.classList.add("special-day")
+      }
+
       dayElement.innerHTML = `
         <span class="day-number">${day}</span>
         <span class="day-name">${dayName}</span>
         ${dayTotal > 0 ? `<span class="day-amount">${this.formatAmount(dayTotal)} ت</span>` : ""}
+        ${this.getSpecialDayIcon(jYear, jMonth, day)}
       `
 
       dayElement.addEventListener("click", () => this.showDayModal(persianDateKey))
       calendar.appendChild(dayElement)
     }
+  }
+
+  // Check if a day is special (cultural events)
+  isSpecialDay(jYear, jMonth, jDay) {
+    // Nowruz period (1-13 Farvardin)
+    if (jMonth === 1 && jDay <= 13) return true
+
+    // Yalda Night (around 30 Azar)
+    if (jMonth === 9 && jDay >= 28) return true
+
+    // Chaharshanbe Suri (last Wednesday before Nowruz)
+    // This would need more complex calculation
+
+    return false
+  }
+
+  // Get special day icon
+  getSpecialDayIcon(jYear, jMonth, jDay) {
+    if (jMonth === 1 && jDay === 1) return '<span class="special-icon">🎊</span>' // Nowruz
+    if (jMonth === 1 && jDay === 13) return '<span class="special-icon">🌿</span>' // Sizdah Bedar
+    if (jMonth === 9 && jDay === 30) return '<span class="special-icon">🕯️</span>' // Yalda
+    return ""
   }
 
   showDayModal(persianDateKey) {
@@ -308,7 +766,6 @@ class SpendingTracker {
 
     // Get day name for modal title
     const dayName = this.getPersianDayName(jy, jm, jd)
-
     document.getElementById("modalDate").textContent = `${dayName}، ${jd} ${this.monthNamesFa[jm - 1]} ${jy}`
 
     const dayExpensesContainer = document.getElementById("dayExpenses")
@@ -321,30 +778,30 @@ class SpendingTracker {
         const expenseElement = document.createElement("div")
         expenseElement.className = "expense-item modal-expense-item"
         expenseElement.innerHTML = `
-      <div class="expense-details">
-        <span class="expense-description">${expense.description}</span>
-        <span class="expense-date">${new Date(expense.timestamp).toLocaleTimeString()}</span>
-      </div>
-      <div class="expense-actions">
-        <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
-        <div class="action-buttons">
-          <button type="button" class="edit-expense-btn" data-expense-id="${expense.id}" title="ویرایش">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-            </svg>
-          </button>
-          <button type="button" class="remove-expense-btn" data-expense-id="${expense.id}" title="حذف">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3,6 5,6 21,6"></polyline>
-              <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2 2 0 0,1 2,2v2"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
-            </svg>
-          </button>
-        </div>
-      </div>
-    `
+          <div class="expense-details">
+            <span class="expense-description">${expense.description}</span>
+            <span class="expense-date">${new Date(expense.timestamp).toLocaleTimeString()}</span>
+          </div>
+          <div class="expense-actions">
+            <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
+            <div class="action-buttons">
+              <button type="button" class="edit-expense-btn" data-expense-id="${expense.id}" title="ویرایش">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button type="button" class="remove-expense-btn" data-expense-id="${expense.id}" title="حذف">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `
         dayExpensesContainer.appendChild(expenseElement)
       })
 
@@ -352,7 +809,7 @@ class SpendingTracker {
       this.bindModalEvents(persianDateKey)
     }
 
-    // Add "Add Expense to This Day" button - ONLY FOR PAST DAYS
+    // Add past day expense button
     const today = window.jalaali.toJalaali(new Date())
     const [currentJy, currentJm, currentJd] = [today.jy, today.jm, today.jd]
     const [dayJy, dayJm, dayJd] = [jy, jm, jd]
@@ -400,18 +857,18 @@ class SpendingTracker {
     const editForm = document.createElement("div")
     editForm.className = "edit-expense-form"
     editForm.innerHTML = `
-    <div class="edit-form-header">
-      <h4>ویرایش هزینه</h4>
-    </div>
-    <div class="edit-form-body">
-      <input type="text" id="editAmount" value="${expense.amount}" placeholder="مبلغ">
-      <input type="text" id="editDescription" value="${expense.description}" placeholder="توضیحات">
-      <div class="edit-form-buttons">
-        <button id="saveEdit" class="save-btn">ذخیره</button>
-        <button id="cancelEdit" class="cancel-btn">لغو</button>
+      <div class="edit-form-header">
+        <h4>ویرایش هزینه</h4>
       </div>
-    </div>
-  `
+      <div class="edit-form-body">
+        <input type="text" id="editAmount" value="${expense.amount}" placeholder="مبلغ">
+        <input type="text" id="editDescription" value="${expense.description}" placeholder="توضیحات">
+        <div class="edit-form-buttons">
+          <button id="saveEdit" class="save-btn">ذخیره</button>
+          <button id="cancelEdit" class="cancel-btn">لغو</button>
+        </div>
+      </div>
+    `
 
     // Replace the modal content temporarily
     const modalBody = document.getElementById("dayExpenses")
@@ -498,18 +955,18 @@ class SpendingTracker {
     const addForm = document.createElement("div")
     addForm.className = "add-expense-form"
     addForm.innerHTML = `
-    <div class="add-form-header">
-      <h4>افزودن هزینه به ${jd} ${this.monthNamesFa[jm - 1]} ${jy}</h4>
-    </div>
-    <div class="add-form-body">
-      <input type="text" id="addDayAmount" placeholder="مبلغ" value="">
-      <input type="text" id="addDayDescription" placeholder="توضیحات" value="">
-      <div class="add-form-buttons">
-        <button id="saveAddDay" class="save-btn">افزودن</button>
-        <button id="cancelAddDay" class="cancel-btn">لغو</button>
+      <div class="add-form-header">
+        <h4>افزودن هزینه به ${jd} ${this.monthNamesFa[jm - 1]} ${jy}</h4>
       </div>
-    </div>
-  `
+      <div class="add-form-body">
+        <input type="text" id="addDayAmount" placeholder="مبلغ" value="">
+        <input type="text" id="addDayDescription" placeholder="توضیحات" value="">
+        <div class="add-form-buttons">
+          <button id="saveAddDay" class="save-btn">افزودن</button>
+          <button id="cancelAddDay" class="cancel-btn">لغو</button>
+        </div>
+      </div>
+    `
 
     // Replace the modal content temporarily
     const modalBody = document.getElementById("dayExpenses")
@@ -591,38 +1048,6 @@ class SpendingTracker {
     })
   }
 
-  // Show success message
-  showSuccess(message) {
-    // Create a simple success notification
-    const notification = document.createElement("div")
-    notification.className = "success-notification"
-    notification.textContent = message
-    notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
-    z-index: 10000;
-    font-weight: 600;
-    animation: slideInRight 0.3s ease-out;
-  `
-
-    document.body.appendChild(notification)
-
-    // Remove after 3 seconds
-    setTimeout(() => {
-      notification.style.animation = "slideOutRight 0.3s ease-out"
-      setTimeout(() => {
-        document.body.removeChild(notification)
-      }, 300)
-    }, 3000)
-  }
-
-  // Bind events for edit/remove buttons in modal
   bindModalEvents(persianDateKey) {
     const editButtons = document.querySelectorAll(".edit-expense-btn")
     const removeButtons = document.querySelectorAll(".remove-expense-btn")
@@ -688,12 +1113,12 @@ class SpendingTracker {
       const [jy, jm, jd] = expense.persianDate.split("/").map(Number)
 
       expenseElement.innerHTML = `
-                <div class="expense-details">
-                    <span class="expense-description">${expense.description}</span>
-                    <span class="expense-date">${jd} ${this.monthNamesFa[jm - 1]}</span>
-                </div>
-                <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
-            `
+        <div class="expense-details">
+          <span class="expense-description">${expense.description}</span>
+          <span class="expense-date">${jd} ${this.monthNamesFa[jm - 1]}</span>
+        </div>
+        <span class="expense-amount">${this.formatAmount(expense.amount)} تومان</span>
+      `
 
       expensesContainer.appendChild(expenseElement)
     })
@@ -716,7 +1141,6 @@ class SpendingTracker {
 
     // Sort by timestamp (most recent first)
     monthExpenses.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-
     return monthExpenses
   }
 
