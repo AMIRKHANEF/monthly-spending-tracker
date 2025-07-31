@@ -465,6 +465,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* iOS touch improvements */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .edit-expense-btn {
@@ -488,6 +494,10 @@ body {
 .edit-expense-btn svg,
 .remove-expense-btn svg {
   pointer-events: none;
+  /* Ensure SVG doesn't interfere with touch events */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .edit-expense-form {
