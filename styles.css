@@ -223,6 +223,14 @@ body {
   border: 1px solid #e2e8f0;
 }
 
+.day-name {
+  font-size: 0.65rem;
+  opacity: 0.7;
+  color: inherit;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
 .calendar-day:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -232,6 +240,10 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-weight: 600;
+}
+
+.calendar-day.has-expense .day-name {
+  opacity: 0.9;
 }
 
 .calendar-day.today {
@@ -672,6 +684,10 @@ body {
     gap: 4px;
   }
 
+  .day-name {
+    font-size: 0.6rem;
+  }
+
   .day-number {
     font-size: 0.9rem;
   }
@@ -717,5 +733,9 @@ body {
     min-width: 44px;
     font-size: 0.9rem;
     padding: 6px;
+  }
+
+  .day-name {
+    font-size: 0.55rem;
   }
 }

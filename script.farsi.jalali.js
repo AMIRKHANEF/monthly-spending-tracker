@@ -18,6 +18,17 @@ class SpendingTracker {
       "اسفند",
     ]
 
+    // Persian day names (Saturday is the first day of the week in Persian calendar)
+    this.dayNamesFa = [
+      "یکشنبه", // Sunday
+      "دوشنبه", // Monday
+      "سه‌شنبه", // Tuesday
+      "چهارشنبه", // Wednesday
+      "پنج‌شنبه", // Thursday
+      "جمعه", // Friday
+      "شنبه", // Saturday
+    ]
+
     this.formatAmount = (amount) => {
       return Number(amount.toFixed(0)).toLocaleString("fa-IR")
     }
@@ -57,6 +68,16 @@ class SpendingTracker {
     document.getElementById("dayModal").addEventListener("click", (e) => {
       if (e.target.id === "dayModal") this.closeModal()
     })
+  }
+
+  // Get Persian day name for a given Jalali date
+  getPersianDayName(jYear, jMonth, jDay) {
+    // Convert Jalali to Gregorian to get the day of week
+    const gDate = window.jalaali.toGregorian(jYear, jMonth, jDay)
+    const gregorianDate = new Date(gDate.gy, gDate.gm - 1, gDate.gd)
+    const dayOfWeek = gregorianDate.getDay() // 0 = Sunday, 1 = Monday, etc.
+
+    return this.dayNamesFa[dayOfWeek]
   }
 
   // Convert Gregorian date string to Persian date string
@@ -256,6 +277,9 @@ class SpendingTracker {
       const dayExpenses = this.expenses[persianDateKey] || []
       const dayTotal = dayExpenses.reduce((sum, expense) => sum + expense.amount, 0)
 
+      // Get the Persian day name for this date
+      const dayName = this.getPersianDayName(jYear, jMonth, day)
+
       const dayElement = document.createElement("div")
       dayElement.className = "calendar-day"
 
@@ -268,9 +292,10 @@ class SpendingTracker {
       }
 
       dayElement.innerHTML = `
-      <span class="day-number">${day}</span>
-      ${dayTotal > 0 ? `<span class="day-amount">${this.formatAmount(dayTotal)} ت</span>` : ""}
-    `
+        <span class="day-number">${day}</span>
+        <span class="day-name">${dayName}</span>
+        ${dayTotal > 0 ? `<span class="day-amount">${this.formatAmount(dayTotal)} ت</span>` : ""}
+      `
 
       dayElement.addEventListener("click", () => this.showDayModal(persianDateKey))
       calendar.appendChild(dayElement)
@@ -281,7 +306,10 @@ class SpendingTracker {
     const dayExpenses = this.expenses[persianDateKey] || []
     const [jy, jm, jd] = persianDateKey.split("/").map(Number)
 
-    document.getElementById("modalDate").textContent = `${this.monthNamesFa[jm - 1]} ${jd}، ${jy}`
+    // Get day name for modal title
+    const dayName = this.getPersianDayName(jy, jm, jd)
+
+    document.getElementById("modalDate").textContent = `${dayName}، ${jd} ${this.monthNamesFa[jm - 1]} ${jy}`
 
     const dayExpensesContainer = document.getElementById("dayExpenses")
     dayExpensesContainer.innerHTML = ""
