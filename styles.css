@@ -896,6 +896,12 @@ body {
   }
 }
 
+/* Whole expenses Button */
+#viewMonthExpenses {
+  left: 20px;
+  right: auto;
+}
+
 /* Theme Control Button */
 .theme-btn {
   background: rgba(255, 255, 255, 0.2);

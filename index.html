@@ -22,6 +22,7 @@
                 <button id="nextMonth" class="nav-btn">‹</button>
                 <span id="currentMonth" class="current-month"></span>
                 <button id="prevMonth" class="nav-btn">›</button>
+                <button id="viewMonthExpenses" class="theme-btn" title="مشاهده هزینه‌های ماه">📊</button>
                 <button id="themeToggle" class="theme-btn" title="تنظیمات تم">🎨</button>
             </div>
         </header>
@@ -68,6 +69,22 @@
                 <div id="dayExpenses" class="day-expenses"></div>
                 <div class="modal-total">
                     جمع کل: <span id="dayTotal">۰ تومان</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Expenses Modal -->
+    <div id="monthExpensesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="monthModalTitle"></h3>
+                <button id="closeMonthExpensesModal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="monthExpensesList" class="month-expenses-list"></div>
+                <div class="modal-total">
+                    جمع کل ماه: <span id="monthTotal">۰ تومان</span>
                 </div>
             </div>
         </div>
