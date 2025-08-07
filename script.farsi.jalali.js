@@ -1069,10 +1069,11 @@ class SpendingTracker {
       newBtn.addEventListener("touchend", handleEdit, { passive: false })
     })
 
-    // Re-query after cloning
-    const newRemoveButtons = document.querySelectorAll(".remove-expense-btn")
+    removeButtons.forEach((btn) => {
+      // Remove any existing listeners
+      btn.replaceWith(btn.cloneNode(true))
+      const newBtn = document.querySelector(`[data-expense-id="${btn.dataset.expenseId}"].remove-expense-btn`)
 
-    newRemoveButtons.forEach((btn) => {
       const handleRemove = (e) => {
         e.preventDefault()
         e.stopPropagation()
@@ -1081,8 +1082,8 @@ class SpendingTracker {
       }
 
       // Add both click and touchend events for iOS compatibility
-      btn.addEventListener("click", handleRemove, { passive: false })
-      btn.addEventListener("touchend", handleRemove, { passive: false })
+      newBtn.addEventListener("click", handleRemove, { passive: false })
+      newBtn.addEventListener("touchend", handleRemove, { passive: false })
     })
   }
 
