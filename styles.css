@@ -1143,11 +1143,16 @@ body {
     gap: 10px;
   }
 
+  /* Whole expenses Button */
+  #viewMonthExpenses {
+    left: 15px;
+    right: auto;
+  }
+
   .theme-btn {
     order: -1;
     padding: 6px;
     padding-top: 4px;
-    position: absolute;
     right: 15px;
   }
 
