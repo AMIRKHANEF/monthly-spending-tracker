@@ -89,6 +89,33 @@
             </div>
         </div>
     </div>
+
+    <!-- Confirmation modal for expense removal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>تأیید حذف</h3>
+                <div class="confirmation-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e53e3e" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                </div>
+                <button id="closeConfirmModal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="confirmation-content">
+                    <p class="confirmation-message">آیا از حذف این هزینه اطمینان دارید؟</p>
+                    <div id="expenseToDelete" class="expense-preview"></div>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button id="confirmDelete" class="add-btn" style="background: #e53e3e; flex: 1;">حذف</button>
+                    <button id="cancelDelete" class="add-btn" style="background: #718096; flex: 1;">لغو</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

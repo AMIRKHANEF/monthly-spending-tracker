@@ -1131,30 +1131,29 @@ class SpendingTracker {
 
   // Remove expense functionality
   removeExpense(persianDateKey, expenseId) {
-    if (!confirm("آیا از حذف این هزینه اطمینان دارید؟")) {
-      return;
-    }
-
     const dayExpenses = this.expenses[persianDateKey] || [];
     const expenseIndex = dayExpenses.findIndex((exp) => exp.id === expenseId);
+    const expenseData = dayExpenses.find((exp) => exp.id === expenseId);
 
-    if (expenseIndex === -1) return;
+    this.showConfirmModal(() => {
+      if (expenseIndex === -1) return;
 
-    // Remove the expense
-    dayExpenses.splice(expenseIndex, 1);
+      // Remove the expense
+      dayExpenses.splice(expenseIndex, 1);
 
-    // If no expenses left for this day, remove the day entry
-    if (dayExpenses.length === 0) {
-      delete this.expenses[persianDateKey];
-    }
+      // If no expenses left for this day, remove the day entry
+      if (dayExpenses.length === 0) {
+        delete this.expenses[persianDateKey];
+      }
 
-    this.saveExpenses();
-    this.updateDisplay();
-    this.renderCalendar();
-    this.renderRecentExpenses();
+      this.saveExpenses();
+      this.updateDisplay();
+      this.renderCalendar();
+      this.renderRecentExpenses();
 
-    // Refresh the modal content
-    this.showDayModal(persianDateKey);
+      // Refresh the modal content
+      this.showDayModal(persianDateKey);
+    }, expenseData);
   }
 
   // Show add expense form for specific day
@@ -1387,6 +1386,60 @@ class SpendingTracker {
 
   saveExpenses() {
     localStorage.setItem("monthlyExpenses2", JSON.stringify(this.expenses));
+  }
+
+  showConfirmModal(onConfirm, expenseData) {
+    const modal = document.getElementById("confirmModal");
+    const expensePreview = document.getElementById("expenseToDelete");
+
+    // Display expense details in the preview
+    expensePreview.innerHTML = `
+      <div class="expense-description">${expenseData.description}</div>
+      <div class="expense-amount">${this.formatAmount(
+        expenseData.amount
+      )} تومان</div>
+    `;
+
+    const confirmBtn = document.getElementById("confirmDelete");
+    const cancelBtn = document.getElementById("cancelDelete");
+    const closeBtn = document.getElementById("closeConfirmModal");
+
+    // Show modal
+    modal.style.display = "block";
+
+    // Handle confirm
+    const handleConfirm = () => {
+      modal.style.display = "none";
+      onConfirm();
+      cleanup();
+    };
+
+    // Handle cancel/close
+    const handleCancel = () => {
+      modal.style.display = "none";
+      cleanup();
+    };
+
+    // Cleanup event listeners
+    const cleanup = () => {
+      confirmBtn.removeEventListener("click", handleConfirm);
+      cancelBtn.removeEventListener("click", handleCancel);
+      closeBtn.removeEventListener("click", handleCancel);
+      modal.removeEventListener("click", handleModalClick);
+    };
+
+    // Handle modal background click
+    const handleModalClick = (e) => {
+      if (e.target === modal) {
+        handleCancel();
+      }
+    };
+
+    // Add event listeners
+    confirmBtn.addEventListener("click", handleConfirm);
+    cancelBtn.addEventListener("click", handleCancel);
+    closeBtn.addEventListener("click", handleCancel);
+    modal.addEventListener("click", handleModalClick);
   }
 }
 
