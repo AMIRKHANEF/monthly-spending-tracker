@@ -37,8 +37,9 @@ class SpendingTracker {
         colors: {
           primary: "linear-gradient(135deg, #48bb78 0%, #38a169 100%)",
           secondary: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-          accent: "#48bb78",
+          accent: "rgba(72, 187, 120, 1)",
           text: "#2d3748",
+          select: 'rgba(72, 187, 120, 0.4)'
         },
         decorations: "🌸🌱🌿🦋",
         greeting: "نوروزتان پیروز! سال نو مبارک",
@@ -54,6 +55,7 @@ class SpendingTracker {
           secondary: "linear-gradient(135deg, #68d391 0%, #48bb78 100%)",
           accent: "#48bb78",
           text: "#2d3748",
+          select: 'rgba(72, 187, 120, 0.4)'
         },
         decorations: "",
         greeting: "مدیریت هزینه‌های ماهانه",
@@ -66,8 +68,9 @@ class SpendingTracker {
         colors: {
           primary: "linear-gradient(135deg, #f6ad55 0%, #ed8936 100%)",
           secondary: "linear-gradient(135deg, #fed7aa 0%, #f6ad55 100%)",
-          accent: "#ed8936",
+          accent: "rgba(237, 137, 54, 1)",
           text: "#744210",
+          select: 'rgba(237, 137, 54, 0.4)'
         },
         decorations: "",
         greeting: "مدیریت هزینه‌های ماهانه",
@@ -80,8 +83,9 @@ class SpendingTracker {
         colors: {
           primary: "linear-gradient(135deg, #d69e2e 0%, #b7791f 100%)",
           secondary: "linear-gradient(135deg, #faf089 0%, #d69e2e 100%)",
-          accent: "#d69e2e",
+          accent: "rgba(214, 158, 46, 1)",
           text: "#744210",
+          select: 'rgba(214, 158, 46, 0.4)'
         },
         decorations: "",
         greeting: "مدیریت هزینه‌های ماهانه",
@@ -94,8 +98,9 @@ class SpendingTracker {
         colors: {
           primary: "linear-gradient(135deg, #4299e1 0%, #2b6cb0 100%)",
           secondary: "linear-gradient(135deg, #bee3f8 0%, #4299e1 100%)",
-          accent: "#4299e1",
+          accent: "rgba(66, 153, 225, 1)",
           text: "#2a4365",
+          select: 'rgba(66, 153, 225, 0.4)'
         },
         decorations: "",
         greeting: "مدیریت هزینه‌های ماهانه",
@@ -108,8 +113,9 @@ class SpendingTracker {
         colors: {
           primary: "linear-gradient(135deg, #e53e3e 0%, #c53030 100%)",
           secondary: "linear-gradient(135deg, #feb2b2 0%, #e53e3e 100%)",
-          accent: "#e53e3e",
+          accent: "rgba(229, 62, 62, 1)",
           text: "#742a2a",
+          select: 'rgba(229, 62, 62, 0.4)'
         },
         decorations: "🍎🍇🕯️📚",
         greeting: "شب یلدایتان مبارک",
@@ -127,6 +133,9 @@ class SpendingTracker {
     this.formatAmount = (amount) => {
       return Number(amount.toFixed(0)).toLocaleString("fa-IR");
     };
+
+    // New property for selected expenses total
+    this.selectedExpensesTotal = 0;
 
     this.init();
   }
@@ -181,6 +190,7 @@ class SpendingTracker {
         secondary: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
         accent: "#667eea",
         text: "#333",
+        select: 'rgba(102, 126, 234, 0.4)'
       },
       decorations: "",
       greeting: "مدیریت هزینه‌های ماهانه",
@@ -244,100 +254,100 @@ class SpendingTracker {
     const isAuto = this.isThemeEnabled && !this.manualTheme;
 
     modal.innerHTML = `
-    <div class="modal-content theme-modal-content">
-      <div class="modal-header">
-        <h3>انتخاب تم و ظاهر</h3>
-        <button id="closeThemeModal" class="close-btn">×</button>
-      </div>
-      <div class="modal-body">
-        <div class="theme-control-section">
-          <div class="theme-toggle-container">
-            <label class="theme-toggle-label">
-              <input type="checkbox" id="themeEnabledToggle" ${
-                this.isThemeEnabled ? "checked" : ""
-              }>
-              <span class="theme-toggle-slider"></span>
-              <span class="theme-toggle-text">تم‌های فرهنگی فارسی</span>
-            </label>
-            <p class="theme-toggle-description">
-              ${
-                this.isThemeEnabled
-                  ? "تم‌ها بر اساس تقویم فارسی و فصول تغییر می‌کنند"
-                  : "استفاده از تم ساده و یکنواخت"
-              }
-            </p>
-          </div>
+      <div class="modal-content theme-modal-content">
+        <div class="modal-header">
+          <h3>انتخاب تم و ظاهر</h3>
+          <button id="closeThemeModal" class="close-btn">×</button>
         </div>
-
-        ${
-          this.isThemeEnabled
-            ? `
-          <div class="theme-selection-section">
-            <h4>انتخاب تم:</h4>
-            <div class="theme-options">
-              <div class="theme-option ${
-                isAuto ? "active" : ""
-              }" data-theme="auto">
-                <div class="theme-preview auto-theme">
-                  <span class="theme-icon">🌟</span>
-                </div>
-                <span class="theme-name">خودکار</span>
-                <span class="theme-description">بر اساس تاریخ فارسی</span>
-              </div>
-
-              ${Object.keys(this.culturalThemes)
-                .map((themeKey) => {
-                  const theme = this.culturalThemes[themeKey];
-                  const isActive = this.manualTheme === themeKey;
-                  return `
-                  <div class="theme-option ${
-                    isActive ? "active" : ""
-                  }" data-theme="${themeKey}">
-                    <div class="theme-preview" style="background: ${
-                      theme.colors.primary
-                    }">
-                      <span class="theme-icon">${theme.decorations.charAt(
-                        0
-                      )}</span>
-                    </div>
-                    <span class="theme-name">${theme.name}</span>
-                    <span class="theme-description">${theme.greeting}</span>
-                  </div>
-                `;
-                })
-                .join("")}
-            </div>
-          </div>
-
-          <div class="current-theme-info">
-            <h4>تم فعلی:</h4>
-            <div class="current-theme-display">
-              <div class="current-theme-preview" style="background: ${
-                currentTheme.colors.primary
-              }">
-                <span class="current-theme-icon">${
-                  currentTheme.decorations.charAt(0) || "🎨"
-                }</span>
-              </div>
-              <div class="current-theme-details">
-                <span class="current-theme-name">${currentTheme.name}</span>
-                <span class="current-theme-greeting">${
-                  currentTheme.greeting
-                }</span>
+        <div class="modal-body">
+          <div class="theme-control-section">
+            <div class="theme-toggle-container">
+              <label class="theme-toggle-label">
+                <input type="checkbox" id="themeEnabledToggle" ${
+                  this.isThemeEnabled ? "checked" : ""
+                }>
+                <span class="theme-toggle-slider"></span>
+                <span class="theme-toggle-text">تم‌های فرهنگی فارسی</span>
+              </label>
+              <p class="theme-toggle-description">
                 ${
-                  currentTheme.quote
-                    ? `<span class="current-theme-quote">${currentTheme.quote}</span>`
-                    : ""
+                  this.isThemeEnabled
+                    ? "تم‌ها بر اساس تقویم فارسی و فصول تغییر می‌کنند"
+                    : "استفاده از تم ساده و یکنواخت"
                 }
-              </div>
+              </p>
             </div>
           </div>
-        `
-            : ""
-        }
+
+          ${
+            this.isThemeEnabled
+              ? `
+            <div class="theme-selection-section">
+              <h4>انتخاب تم:</h4>
+              <div class="theme-options">
+                <div class="theme-option ${
+                  isAuto ? "active" : ""
+                }" data-theme="auto">
+                  <div class="theme-preview auto-theme">
+                    <span class="theme-icon">🌟</span>
+                  </div>
+                  <span class="theme-name">خودکار</span>
+                  <span class="theme-description">بر اساس تاریخ فارسی</span>
+                </div>
+
+                ${Object.keys(this.culturalThemes)
+                  .map((themeKey) => {
+                    const theme = this.culturalThemes[themeKey];
+                    const isActive = this.manualTheme === themeKey;
+                    return `
+                    <div class="theme-option ${
+                      isActive ? "active" : ""
+                    }" data-theme="${themeKey}">
+                      <div class="theme-preview" style="background: ${
+                        theme.colors.primary
+                      }">
+                        <span class="theme-icon">${theme.decorations.charAt(
+                          0
+                        )}</span>
+                      </div>
+                      <span class="theme-name">${theme.name}</span>
+                      <span class="theme-description">${theme.greeting}</span>
+                    </div>
+                  `;
+                  })
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="current-theme-info">
+              <h4>تم فعلی:</h4>
+              <div class="current-theme-display">
+                <div class="current-theme-preview" style="background: ${
+                  currentTheme.colors.primary
+                }">
+                  <span class="current-theme-icon">${
+                    currentTheme.decorations.charAt(0) || "🎨"
+                  }</span>
+                </div>
+                <div class="current-theme-details">
+                  <span class="current-theme-name">${currentTheme.name}</span>
+                  <span class="current-theme-greeting">${
+                    currentTheme.greeting
+                  }</span>
+                  ${
+                    currentTheme.quote
+                      ? `<span class="current-theme-quote">${currentTheme.quote}</span>`
+                      : ""
+                  }
+                </div>
+              </div>
+            </div>
+          `
+              : ""
+          }
+        </div>
       </div>
-    </div>
-  `;
+    `;
 
     document.body.appendChild(modal);
 
@@ -418,6 +428,7 @@ class SpendingTracker {
     root.style.setProperty("--theme-secondary", theme.colors.secondary);
     root.style.setProperty("--theme-accent", theme.colors.accent);
     root.style.setProperty("--theme-text", theme.colors.text);
+    root.style.setProperty("--theme-select", theme.colors.select);
 
     // Update body background
     document.body.style.background = theme.colors.primary;
@@ -459,18 +470,18 @@ class SpendingTracker {
     const culturalHeader = document.createElement("div");
     culturalHeader.className = "cultural-header";
     culturalHeader.innerHTML = `
-    <div class="cultural-decorations">${theme.decorations}</div>
-    <div class="cultural-greeting">${theme.greeting}</div>
-    <div class="cultural-quote">${theme.quote}</div>
-    <div class="cultural-message">${theme.specialMessage}</div>
-  `;
+      <div class="cultural-decorations">${theme.decorations}</div>
+      <div class="cultural-greeting">${theme.greeting}</div>
+      <div class="cultural-quote">${theme.quote}</div>
+      <div class="cultural-message">${theme.specialMessage}</div>
+    `;
 
     const container = document.querySelector(".container");
     const header = document.querySelector(".header");
     container.insertBefore(culturalHeader, header.nextSibling);
   }
 
-  // Show the whole expeses of the month modal
+  // Add this method inside the SpendingTracker class
   showMonthExpensesModal() {
     const monthExpenses = this.getCurrentMonthExpenses(); // Already sorted by timestamp
     const [jy, jm] = [this.currentJalaliDate.jy, this.currentJalaliDate.jm];
@@ -482,6 +493,10 @@ class SpendingTracker {
     const monthExpensesListContainer =
       document.getElementById("monthExpensesList");
     monthExpensesListContainer.innerHTML = "";
+
+    // Reset selected expenses total when opening the modal
+    this.selectedExpensesTotal = 0;
+    this.updateSelectedTotalDisplay();
 
     if (monthExpenses.length === 0) {
       monthExpensesListContainer.innerHTML =
@@ -515,30 +530,35 @@ class SpendingTracker {
         const daySection = document.createElement("div");
         daySection.className = "day-expenses-section"; // A new class for styling if needed
         daySection.innerHTML = `
-        <h4 style="margin-top: 15px; margin-bottom: 10px; color: var(--theme-accent); font-weight: 600;">
-          ${dayName}، ${jd} ${this.monthNamesFa[jm - 1]}
-          <span style="float: left; color: var(--theme-text);">${this.formatAmount(
-            dayTotal
-          )} ت</span>
-        </h4>
-        <div class="expenses-for-day"></div>
-      `;
+          <h4 style="margin-top: 15px; margin-bottom: 10px; color: var(--theme-accent); font-weight: 600;">
+            ${dayName}، ${jd} ${this.monthNamesFa[jm - 1]}
+            <span style="float: left; color: var(--theme-text);">${this.formatAmount(
+              dayTotal
+            )} ت</span>
+          </h4>
+          <div class="expenses-for-day"></div>
+        `;
         const expensesForDayDiv = daySection.querySelector(".expenses-for-day");
 
         dayExpenses.forEach((expense) => {
           const expenseElement = document.createElement("div");
           expenseElement.className = "expense-item";
+          expenseElement.setAttribute("data-amount", expense.amount); // Store amount
+          expenseElement.setAttribute("data-expense-id", expense.id); // Store ID for uniqueness
           expenseElement.innerHTML = `
-          <div class="expense-details">
-            <span class="expense-description">${expense.description}</span>
-            <span class="expense-date">${new Date(
-              expense.timestamp
-            ).toLocaleTimeString()}</span>
-          </div>
-          <span class="expense-amount">${this.formatAmount(
-            expense.amount
-          )} تومان</span>
-        `;
+            <div class="expense-details">
+              <span class="expense-description">${expense.description}</span>
+              <span class="expense-date">${new Date(
+                expense.timestamp
+              ).toLocaleTimeString()}</span>
+            </div>
+            <span class="expense-amount">${this.formatAmount(
+              expense.amount
+            )} تومان</span>
+          `;
+          expenseElement.addEventListener("click", (e) =>
+            this.toggleExpenseSelection(e.currentTarget)
+          );
           expensesForDayDiv.appendChild(expenseElement);
         });
         monthExpensesListContainer.appendChild(daySection);
@@ -553,11 +573,34 @@ class SpendingTracker {
     document.getElementById("monthExpensesModal").style.display = "block";
   }
 
-  // Close the month expenses modal
+  // New method to toggle expense selection and update total
+  toggleExpenseSelection(expenseElement) {
+    const amount = parseFloat(expenseElement.getAttribute("data-amount"));
+    if (expenseElement.classList.contains("selected-expense")) {
+      // Deselect
+      expenseElement.classList.remove("selected-expense");
+      this.selectedExpensesTotal -= amount;
+    } else {
+      // Select
+      expenseElement.classList.add("selected-expense");
+      this.selectedExpensesTotal += amount;
+    }
+    this.updateSelectedTotalDisplay();
+  }
+
+  // New method to update the displayed selected total
+  updateSelectedTotalDisplay() {
+    document.getElementById(
+      "selectedExpensesTotal"
+    ).textContent = `${this.formatAmount(this.selectedExpensesTotal)} تومان`;
+  }
+
+  // Add this method inside the SpendingTracker class
   closeMonthExpensesModal() {
     document.getElementById("monthExpensesModal").style.display = "none";
   }
 
+  // Modify the bindEvents method
   bindEvents() {
     document
       .getElementById("addExpense")
@@ -583,10 +626,10 @@ class SpendingTracker {
       .addEventListener("click", () => this.closeModal());
     document
       .getElementById("closeMonthExpensesModal")
-      .addEventListener("click", () => this.closeMonthExpensesModal());
+      .addEventListener("click", () => this.closeMonthExpensesModal()); // New
     document
       .getElementById("viewMonthExpenses")
-      .addEventListener("click", () => this.showMonthExpensesModal());
+      .addEventListener("click", () => this.showMonthExpensesModal()); // New
 
     const amountInput = document.getElementById("expenseAmount");
     amountInput.addEventListener("input", (e) => {
@@ -602,12 +645,13 @@ class SpendingTracker {
       if (e.target.id === "dayModal") this.closeModal();
     });
 
-    // Close monthly expenses modal when clicking outside
+    // Close new monthly expenses modal when clicking outside
     document
       .getElementById("monthExpensesModal")
       .addEventListener("click", (e) => {
+        // New
         if (e.target.id === "monthExpensesModal")
-          this.closeMonthExpensesModal();
+          this.closeMonthExpensesModal(); // New
       });
 
     document
@@ -728,18 +772,18 @@ class SpendingTracker {
     notification.className = "success-notification themed-notification";
     notification.textContent = message;
     notification.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: ${theme.colors.secondary};
-    color: white;
-    padding: 12px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
-    z-index: 10000;
-    font-weight: 600;
-    animation: slideInRight 0.3s ease-out;
-  `;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${theme.colors.secondary};
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+      z-index: 10000;
+      font-weight: 600;
+      animation: slideInRight 0.3s ease-out;
+    `;
 
     document.body.appendChild(notification);
 
@@ -908,15 +952,15 @@ class SpendingTracker {
       }
 
       dayElement.innerHTML = `
-      <span class="day-number">${day}</span>
-      <span class="day-name">${dayName}</span>
-      ${
-        dayTotal > 0
-          ? `<span class="day-amount">${this.formatAmount(dayTotal)} ت</span>`
-          : ""
-      }
-      ${this.getSpecialDayIcon(jYear, jMonth, day)}
-    `;
+        <span class="day-number">${day}</span>
+        <span class="day-name">${dayName}</span>
+        ${
+          dayTotal > 0
+            ? `<span class="day-amount">${this.formatAmount(dayTotal)} ت</span>`
+            : ""
+        }
+        ${this.getSpecialDayIcon(jYear, jMonth, day)}
+      `;
 
       dayElement.addEventListener("click", () =>
         this.showDayModal(persianDateKey)
@@ -971,38 +1015,38 @@ class SpendingTracker {
         const expenseElement = document.createElement("div");
         expenseElement.className = "expense-item modal-expense-item";
         expenseElement.innerHTML = `
-        <div class="expense-details">
-          <span class="expense-description">${expense.description}</span>
-          <span class="expense-date">${new Date(
-            expense.timestamp
-          ).toLocaleTimeString()}</span>
-        </div>
-        <div class="expense-actions">
-          <span class="expense-amount">${this.formatAmount(
-            expense.amount
-          )} تومان</span>
-          <div class="action-buttons">
-            <button type="button" class="edit-expense-btn" data-expense-id="${
-              expense.id
-            }" title="ویرایش">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg>
-            </button>
-            <button type="button" class="remove-expense-btn" data-expense-id="${
-              expense.id
-            }" title="حذف">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3,6 5,6 21,6"></polyline>
-                <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
-            </button>
+          <div class="expense-details">
+            <span class="expense-description">${expense.description}</span>
+            <span class="expense-date">${new Date(
+              expense.timestamp
+            ).toLocaleTimeString()}</span>
           </div>
-        </div>
-      `;
+          <div class="expense-actions">
+            <span class="expense-amount">${this.formatAmount(
+              expense.amount
+            )} تومان</span>
+            <div class="action-buttons">
+              <button type="button" class="edit-expense-btn" data-expense-id="${
+                expense.id
+              }" title="ویرایش">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button type="button" class="remove-expense-btn" data-expense-id="${
+                expense.id
+              }" title="حذف">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3,6 5,6 21,6"></polyline>
+                  <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
         dayExpensesContainer.appendChild(expenseElement);
       });
 
@@ -1025,14 +1069,14 @@ class SpendingTracker {
       const addExpenseButton = document.createElement("div");
       addExpenseButton.className = "add-expense-to-day";
       addExpenseButton.innerHTML = `
-      <button id="addExpenseToDay" class="add-expense-day-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        افزودن هزینه به این روز
-      </button>
-    `;
+        <button id="addExpenseToDay" class="add-expense-day-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          افزودن هزینه به این روز
+        </button>
+      `;
       dayExpensesContainer.appendChild(addExpenseButton);
 
       // Bind event for add expense button
@@ -1065,18 +1109,18 @@ class SpendingTracker {
     const editForm = document.createElement("div");
     editForm.className = "edit-expense-form";
     editForm.innerHTML = `
-    <div class="edit-form-header">
-      <h4>ویرایش هزینه</h4>
-    </div>
-    <div class="edit-form-body">
-      <input type="text" id="editAmount" value="${expense.amount}" placeholder="مبلغ">
-      <input type="text" id="editDescription" value="${expense.description}" placeholder="توضیحات">
-      <div class="edit-form-buttons">
-        <button id="saveEdit" class="save-btn">ذخیره</button>
-        <button id="cancelEdit" class="cancel-btn">لغو</button>
+      <div class="edit-form-header">
+        <h4>ویرایش هزینه</h4>
       </div>
-    </div>
-  `;
+      <div class="edit-form-body">
+        <input type="text" id="editAmount" value="${expense.amount}" placeholder="مبلغ">
+        <input type="text" id="editDescription" value="${expense.description}" placeholder="توضیحات">
+        <div class="edit-form-buttons">
+          <button id="saveEdit" class="save-btn">ذخیره</button>
+          <button id="cancelEdit" class="cancel-btn">لغو</button>
+        </div>
+      </div>
+    `;
 
     // Replace the modal content temporarily
     const modalBody = document.getElementById("dayExpenses");
@@ -1164,18 +1208,18 @@ class SpendingTracker {
     const addForm = document.createElement("div");
     addForm.className = "add-expense-form";
     addForm.innerHTML = `
-    <div class="add-form-header">
-      <h4>افزودن هزینه به ${jd} ${this.monthNamesFa[jm - 1]} ${jy}</h4>
-    </div>
-    <div class="add-form-body">
-      <input type="text" id="addDayAmount" placeholder="مبلغ" value="">
-      <input type="text" id="addDayDescription" placeholder="توضیحات" value="">
-      <div class="add-form-buttons">
-        <button id="saveAddDay" class="save-btn">افزودن</button>
-        <button id="cancelAddDay" class="cancel-btn">لغو</button>
+      <div class="add-form-header">
+        <h4>افزودن هزینه به ${jd} ${this.monthNamesFa[jm - 1]} ${jy}</h4>
       </div>
-    </div>
-  `;
+      <div class="add-form-body">
+        <input type="text" id="addDayAmount" placeholder="مبلغ" value="">
+        <input type="text" id="addDayDescription" placeholder="توضیحات" value="">
+        <div class="add-form-buttons">
+          <button id="saveAddDay" class="save-btn">افزودن</button>
+          <button id="cancelAddDay" class="cancel-btn">لغو</button>
+        </div>
+      </div>
+    `;
 
     // Replace the modal content temporarily
     const modalBody = document.getElementById("dayExpenses");
@@ -1331,14 +1375,14 @@ class SpendingTracker {
       const [jy, jm, jd] = expense.persianDate.split("/").map(Number);
 
       expenseElement.innerHTML = `
-      <div class="expense-details">
-        <span class="expense-description">${expense.description}</span>
-        <span class="expense-date">${jd} ${this.monthNamesFa[jm - 1]}</span>
-      </div>
-      <span class="expense-amount">${this.formatAmount(
-        expense.amount
-      )} تومان</span>
-    `;
+        <div class="expense-details">
+          <span class="expense-description">${expense.description}</span>
+          <span class="expense-date">${jd} ${this.monthNamesFa[jm - 1]}</span>
+        </div>
+        <span class="expense-amount">${this.formatAmount(
+          expense.amount
+        )} تومان</span>
+      `;
 
       expensesContainer.appendChild(expenseElement);
     });

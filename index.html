@@ -81,11 +81,16 @@
                 <h3 id="monthModalTitle"></h3>
                 <button id="closeMonthExpensesModal" class="close-btn">×</button>
             </div>
-            <div class="modal-body">
-                <div id="monthExpensesList" class="month-expenses-list"></div>
+            <div class="modal-body totals">
+                <div class="modal-total selected-total-display">
+                    جمع انتخاب شده: <span id="selectedExpensesTotal">۰ تومان</span>
+                </div>
                 <div class="modal-total">
                     جمع کل ماه: <span id="monthTotal">۰ تومان</span>
                 </div>
+            </div>
+            <div class="modal-body monthExpensesModal">
+                <div id="monthExpensesList" class="month-expenses-list"></div>
             </div>
         </div>
     </div>

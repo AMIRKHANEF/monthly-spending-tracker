@@ -1,8 +1,48 @@
+/* Add these styles to your existing styles.css */
+
+.expense-item.selected-expense {
+  background: var(--theme-select); /* A light accent background */
+  border-color: var(--theme-accent);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  transform: scale(1.01);
+}
+
+.selected-total-display {
+  margin-bottom: 10px; /* Space between selected total and overall total */
+  background: #e6eafc; /* A slightly different background for distinction */
+  border: 1px solid var(--theme-accent);
+  color: var(--theme-text);
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.modal-body.totals {
+  padding: 8px 25px;
+}
+
+/* Ensure the modal-total styles are still applied */
+.modal-total {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--theme-text);
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif, "Vazir",
+    "Tahoma";
+}
+
+/* Existing styles from your attachment */
 :root {
   --theme-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --theme-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --theme-accent: #667eea;
   --theme-text: #333;
+  --theme-select: rgba(102, 126, 234, 0.4);
 }
 
 * {
@@ -437,16 +477,21 @@ body {
   backdrop-filter: blur(5px);
   animation: fadeIn 0.3s ease-out;
 }
+.modal-body.monthExpensesModal {
+  max-height: 50vh;
+}
 
 .modal-content {
   background: white;
-  margin: 10% auto;
+  margin: 5% auto;
   padding: 0;
   border-radius: 20px;
   width: 90%;
   max-width: 500px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   animation: modalSlide 0.3s ease-out;
+  max-height: 85vh;
+  overflow: auto;
 }
 
 @keyframes modalSlide {
