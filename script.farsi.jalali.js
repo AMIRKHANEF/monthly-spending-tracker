@@ -628,10 +628,10 @@ class SpendingTracker {
       .addEventListener("click", () => this.closeModal());
     document
       .getElementById("closeMonthExpensesModal")
-      .addEventListener("click", () => this.closeMonthExpensesModal()); // New
+      .addEventListener("click", () => this.closeMonthExpensesModal());
     document
       .getElementById("viewMonthExpenses")
-      .addEventListener("click", () => this.showMonthExpensesModal()); // New
+      .addEventListener("click", () => this.showMonthExpensesModal());
 
     const amountInput = document.getElementById("expenseAmount");
     amountInput.addEventListener("input", (e) => {
@@ -651,9 +651,8 @@ class SpendingTracker {
     document
       .getElementById("monthExpensesModal")
       .addEventListener("click", (e) => {
-        // New
         if (e.target.id === "monthExpensesModal")
-          this.closeMonthExpensesModal(); // New
+          this.closeMonthExpensesModal();
       });
 
     document
