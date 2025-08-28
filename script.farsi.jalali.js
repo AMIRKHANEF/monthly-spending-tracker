@@ -39,7 +39,7 @@ class SpendingTracker {
           secondary: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
           accent: "rgba(72, 187, 120, 1)",
           text: "#2d3748",
-          select: 'rgba(72, 187, 120, 0.4)'
+          select: "rgba(72, 187, 120, 0.4)",
         },
         decorations: "🌸🌱🌿🦋",
         greeting: "نوروزتان پیروز! سال نو مبارک",
@@ -55,7 +55,7 @@ class SpendingTracker {
           secondary: "linear-gradient(135deg, #68d391 0%, #48bb78 100%)",
           accent: "#48bb78",
           text: "#2d3748",
-          select: 'rgba(72, 187, 120, 0.4)'
+          select: "rgba(72, 187, 120, 0.4)",
         },
         decorations: "",
         greeting: "مدیریت هزینه‌های ماهانه",
@@ -70,7 +70,7 @@ class SpendingTracker {
           secondary: "linear-gradient(135deg, #fed7aa 0%, #f6ad55 100%)",
           accent: "rgba(237, 137, 54, 1)",
           text: "#744210",
-          select: 'rgba(237, 137, 54, 0.4)'
+          select: "rgba(237, 137, 54, 0.4)",
         },
         decorations: "",
         greeting: "مدیریت هزینه‌های ماهانه",
@@ -85,7 +85,7 @@ class SpendingTracker {
           secondary: "linear-gradient(135deg, #faf089 0%, #d69e2e 100%)",
           accent: "rgba(214, 158, 46, 1)",
           text: "#744210",
-          select: 'rgba(214, 158, 46, 0.4)'
+          select: "rgba(214, 158, 46, 0.4)",
         },
         decorations: "",
         greeting: "مدیریت هزینه‌های ماهانه",
@@ -100,7 +100,7 @@ class SpendingTracker {
           secondary: "linear-gradient(135deg, #bee3f8 0%, #4299e1 100%)",
           accent: "rgba(66, 153, 225, 1)",
           text: "#2a4365",
-          select: 'rgba(66, 153, 225, 0.4)'
+          select: "rgba(66, 153, 225, 0.4)",
         },
         decorations: "",
         greeting: "مدیریت هزینه‌های ماهانه",
@@ -115,7 +115,7 @@ class SpendingTracker {
           secondary: "linear-gradient(135deg, #feb2b2 0%, #e53e3e 100%)",
           accent: "rgba(229, 62, 62, 1)",
           text: "#742a2a",
-          select: 'rgba(229, 62, 62, 0.4)'
+          select: "rgba(229, 62, 62, 0.4)",
         },
         decorations: "🍎🍇🕯️📚",
         greeting: "شب یلدایتان مبارک",
@@ -190,7 +190,7 @@ class SpendingTracker {
         secondary: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
         accent: "#667eea",
         text: "#333",
-        select: 'rgba(102, 126, 234, 0.4)'
+        select: "rgba(102, 126, 234, 0.4)",
       },
       decorations: "",
       greeting: "مدیریت هزینه‌های ماهانه",
