@@ -575,7 +575,9 @@ class SpendingTracker {
 
   // New method to toggle expense selection and update total
   toggleExpenseSelection(expenseElement) {
-    const amount = parseFloat(expenseElement.getAttribute("data-amount"));
+    const amount = Number.parseFloat(
+      expenseElement.getAttribute("data-amount")
+    );
     if (expenseElement.classList.contains("selected-expense")) {
       // Deselect
       expenseElement.classList.remove("selected-expense");
