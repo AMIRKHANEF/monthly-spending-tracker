@@ -4,5 +4,15 @@
   "private": true,
   "scripts": {
     "build": "echo 'no build script'"
+  },
+  "description": "Monthly Spending Tracker is a simple and intuitive web application that helps you manage and track your monthly expenses. With an easy-to-use interface, you can log your spending, categorize expenses, and visualize your financial habits, empowering you to take control of your personal budget.",
+  "main": "script.farsi.jalali.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0"
   }
 }
