@@ -66,6 +66,20 @@ export class SpendingTracker {
       this.getCurrentMonthTotal(),
       this.getCurrentMonthDailyAverage()
     );
+
+    const addExpenseCard = document.querySelector(".add-expense-card");
+    const today = window.jalaali.toJalaali(new Date());
+    const isCurrentMonth =
+      today.jy === this.currentJalaliDate.jy &&
+      today.jm === this.currentJalaliDate.jm;
+
+    if (addExpenseCard) {
+      if (isCurrentMonth) {
+        addExpenseCard.style.display = "block";
+      } else {
+        addExpenseCard.style.display = "none";
+      }
+    }
   }
 
   getCurrentMonthTotal() {
