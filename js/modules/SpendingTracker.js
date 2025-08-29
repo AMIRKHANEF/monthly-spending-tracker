@@ -46,6 +46,20 @@ export class SpendingTracker {
   applyCurrentTheme() {
     const theme = this.getEffectiveTheme();
     this.culturalThemes.applyTheme(theme);
+
+    // Update cultural header only if themes are enabled
+    if (
+      this.isThemeEnabled &&
+      (theme.decorations || theme.quote || theme.specialMessage)
+    ) {
+      this.updateCulturalHeader(theme);
+    } else {
+      const existingHeader = document.querySelector(".cultural-header");
+
+      if (existingHeader) {
+        existingHeader.remove();
+      }
+    }
   }
 
   getEffectiveTheme() {
