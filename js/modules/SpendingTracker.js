@@ -52,7 +52,7 @@ export class SpendingTracker {
       this.isThemeEnabled &&
       (theme.decorations || theme.quote || theme.specialMessage)
     ) {
-      this.updateCulturalHeader(theme);
+      this.culturalThemes.updateCulturalHeader(theme);
     } else {
       const existingHeader = document.querySelector(".cultural-header");
 
