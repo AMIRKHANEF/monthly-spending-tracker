@@ -19,6 +19,16 @@ export class UIManager {
       this.tracker.navigateMonth("prev");
     });
 
+    // Entered expense amount readable
+    const amountInput = document.getElementById("expenseAmount");
+    amountInput.addEventListener("input", (e) => {
+      // Remove everything that's not a digit
+      const onlyNumbers = e.target.value.replace(/\D/g, "");
+
+      // Format with commas (e.g., 11000 -> 11,000)
+      e.target.value = onlyNumbers.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    });
+
     // Expense form events
     document.getElementById("addExpense").addEventListener("click", () => {
       this.handleAddExpense();
@@ -86,7 +96,7 @@ export class UIManager {
     const amountInput = document.getElementById("expenseAmount");
     const descriptionInput = document.getElementById("expenseDescription");
 
-    const amount = Number.parseFloat(amountInput.value);
+    const amount = Number.parseFloat(amountInput.value.replace(/,/g, ""));
     const description = descriptionInput.value.trim();
 
     if (this.tracker.addExpense(amount, description)) {
