@@ -1,0 +1,32 @@
+/* Extracted CSS variables and theme definitions */
+:root {
+  --theme-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --theme-secondary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --theme-accent: #667eea;
+  --theme-text: #333;
+  --theme-select: rgba(102, 126, 234, 0.4);
+
+  /* Animation durations */
+  --animation-fast: 0.3s;
+  --animation-normal: 0.5s;
+  --animation-slow: 0.8s;
+
+  /* Spacing */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 15px;
+  --spacing-lg: 20px;
+  --spacing-xl: 25px;
+
+  /* Border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 50%;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 8px 25px rgba(102, 126, 234, 0.3);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.3);
+}

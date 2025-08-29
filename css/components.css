@@ -1,0 +1,237 @@
+/* Component-specific styles */
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  animation: slideDown 0.6s ease-out;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: white;
+  margin-bottom: var(--spacing-md);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.month-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 25px;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  transition: all var(--animation-fast) ease;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.current-month {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 500;
+  min-width: 150px;
+}
+
+/* Cards */
+.summary-card,
+.add-expense-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideUp 0.6s ease-out;
+}
+
+.summary-card {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--theme-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif, "Vazir",
+    "Tahoma";
+}
+
+/* Forms */
+.add-expense-card h3 {
+  margin-bottom: var(--spacing-lg);
+  color: var(--theme-text);
+  font-weight: 600;
+}
+
+.input-group {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.input-group input {
+  flex: 1;
+  min-width: 120px;
+  padding: var(--spacing-md) 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  transition: all var(--animation-fast) ease;
+  background: white;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.add-btn {
+  background: var(--theme-secondary);
+  color: white;
+  border: none;
+  padding: var(--spacing-md) 24px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--animation-fast) ease;
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.add-btn:active {
+  transform: translateY(0);
+}
+
+/* Expenses List */
+.expenses-list {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideUp 1s ease-out;
+}
+
+.expenses-list h3 {
+  margin-bottom: var(--spacing-lg);
+  color: var(--theme-text);
+  font-weight: 600;
+}
+
+.expense-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--theme-accent);
+  transition: all var(--animation-fast) ease;
+  animation: slideIn var(--animation-normal) ease-out;
+}
+
+.expense-item:hover {
+  transform: translateX(5px);
+  box-shadow: var(--shadow-sm);
+}
+
+.expense-item.selected-expense {
+  background: var(--theme-select);
+  border-color: var(--theme-accent);
+  box-shadow: var(--shadow-sm);
+  transform: scale(1.01);
+}
+
+.expense-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.expense-description {
+  font-weight: 600;
+  color: var(--theme-text);
+}
+
+.expense-date {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.expense-amount {
+  font-weight: 700;
+  color: #e53e3e;
+  font-size: 1.1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif, "Vazir",
+    "Tahoma";
+}
+
+/* Theme Controls */
+.theme-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  padding-top: 6px;
+  border-radius: var(--radius-md);
+  transition: all var(--animation-fast) ease;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  position: absolute;
+  right: var(--spacing-lg);
+  bottom: 50%;
+  transform: translateY(50%);
+}
+
+.theme-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+#viewMonthExpenses {
+  left: var(--spacing-lg);
+  right: auto;
+}
