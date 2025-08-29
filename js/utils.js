@@ -26,7 +26,8 @@ export const dayNamesFa = [
 export function getPersianDayName(jy, jm, jd) {
   const gDate = window.jalaali.toGregorian(jy, jm, jd);
   const dayOfWeek = new Date(gDate.gy, gDate.gm - 1, gDate.gd).getDay();
-  return this.dayNamesFa[dayOfWeek];
+
+  return dayNamesFa[dayOfWeek];
 }
 
 export const getDaysInMonth = (jy, jm) =>

@@ -6,6 +6,7 @@ import { DataManager } from "./DataManager.js";
 import { DateUtils } from "./DateUtils.js";
 import recentExpenses from "./UIManager/RecentExpenses.js";
 import showNotification from "./UIManager/ShowNotification.js";
+import { formatAmount } from "../utils.js";
 
 export class SpendingTracker {
   constructor() {
@@ -27,6 +28,9 @@ export class SpendingTracker {
     this.themeSettings = this.dataManager.loadThemeSettings();
     this.isThemeEnabled = this.themeSettings.enabled;
     this.manualTheme = this.themeSettings.manualTheme;
+
+    // Selected expenses in "Month Expenses"
+    this.selectedExpensesTotal = 0;
 
     this.init();
   }
@@ -175,5 +179,11 @@ export class SpendingTracker {
     this.dataManager.saveThemeSettings();
     this.applyCurrentTheme();
     this.updateThemeButton();
+  }
+
+  updateSelectedTotalDisplay() {
+    document.getElementById(
+      "selectedExpensesTotal"
+    ).textContent = `${formatAmount(this.selectedExpensesTotal)} تومان`;
   }
 }

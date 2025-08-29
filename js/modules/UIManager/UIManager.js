@@ -1,6 +1,7 @@
 import { formatAmount, monthNamesFa } from "../../utils.js";
 import showNotification from "./ShowNotification.js";
 import showThemeSelector from "./ThemeSelector.js";
+import showMonthExpensesModal from "./MonthExpenses.js";
 
 export class UIManager {
   constructor(spendingTracker) {
@@ -14,7 +15,6 @@ export class UIManager {
     document.getElementById("nextMonth").addEventListener("click", () => {
       this.tracker.navigateMonth("next");
     });
-
     document.getElementById("prevMonth").addEventListener("click", () => {
       this.tracker.navigateMonth("prev");
     });
@@ -46,6 +46,13 @@ export class UIManager {
       this.showThemeSelector(this.tracker, showNotification);
     });
 
+    // Modal events
+    document
+      .getElementById("closeMonthExpensesModal")
+      .addEventListener("click", () => {
+        document.getElementById("monthExpensesModal").style.display = "none";
+      });
+
     // Close modals when clicking outside
     window.addEventListener("click", (e) => {
       const dayModal = document.getElementById("dayModal");
@@ -68,6 +75,11 @@ export class UIManager {
         this.handleRemoveExpense(persianDate, expenseId);
       }
     });
+
+    // All month expenses
+    document
+      .getElementById("viewMonthExpenses")
+      .addEventListener("click", () => showMonthExpensesModal(this.tracker));
   }
 
   handleAddExpense() {
