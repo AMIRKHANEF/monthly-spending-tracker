@@ -10,6 +10,9 @@
     <!-- Load Jalali first -->
     <script src="https://unpkg.com/jalaali-js/dist/jalaali.min.js"></script>
 
+    <!-- Load manifest -->
+    <link rel="manifest" href="./manifest.json" />
+
     <!-- Then load your modified script -->
     <script src="script.farsi.jalali.js"></script>
 </head>
@@ -121,6 +124,17 @@
             </div>
         </div>
     </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                }, function (err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
 </body>
 
 </html>

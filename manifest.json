@@ -1,0 +1,6 @@
+{
+    "name": "Monthly Spending Tracker",
+    "short_name": "SpendingTracker",
+    "start_url": "/index.html",
+    "display": "standalone"
+}
